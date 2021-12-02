@@ -1,0 +1,26 @@
+on: push
+name: 🚀 Deploy website
+jobs:
+  web-deploy:
+    name: 🎉 Deploy
+    runs-on: ubuntu-latest
+    steps:
+      - name: 🚚 Get latest code
+        uses: actions/checkout@v2
+
+      - name: Use Node.js 12
+        uses: actions/setup-node@v2-beta
+        with:
+          node-version: "14.17.0"
+
+      - name: 🔨 Build Project
+        run: |
+          yarn install
+          yarn run build
+      - name: FTP Deploy
+        uses: SamKirkland/FTP-Deploy-Action@4.2.0
+        with:
+          server: ftp.rubyswap.finance
+          username: bino86@exchange.rubyswap.finance
+          password: {{@secrets.PASSWORD}}
+          local-dir: ./build/
