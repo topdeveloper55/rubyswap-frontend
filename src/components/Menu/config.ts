@@ -35,6 +35,11 @@ const config: (t: ContextApi['t']) => MenuEntry[] = (t) => [
     icon: 'PoolIcon',
     href: '/pools',
   },
+  {
+    label: t('Tutorials'),
+    icon: 'InfoIcon',
+    href: '/tutorials',
+  },
   // {
   //   label: t('Prediction (BETA)'),
   //   icon: 'PredictionsIcon',
@@ -76,16 +81,6 @@ const config: (t: ContextApi['t']) => MenuEntry[] = (t) => [
   //       href: '/profile',
   //     },
   //   ],
-  // },
-  {
-    label: t('Tutorials'),
-    icon: 'TicketIcon',
-    href: 'tutorials',
-  },
-  // {
-  //   label: t('IFO'),
-  //   icon: 'IfoIcon',
-  //   href: '/ifo',
   // },
   {
     label: t('More'),
