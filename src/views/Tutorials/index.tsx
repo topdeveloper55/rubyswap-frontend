@@ -38,14 +38,10 @@ export default function Tutorials() {
       </PageHeader>
       <Page>
         <VideoWrapper>
-          <EmbedVideo className="tutor-video" src="https://youtu.be/Fiy7YDaXUz4">
-          </EmbedVideo>
-          <EmbedVideo className="tutor-video" src="https://youtu.be/YGE-GxArA-M">
-          </EmbedVideo>
-          <EmbedVideo className="tutor-video" src="https://youtu.be/LBGhu2G6_m4">
-          </EmbedVideo>
-          <EmbedVideo className="tutor-video" src="https://youtu.be/8JOHkP3XntA">
-          </EmbedVideo> 
+          <EmbedVideo className="tutor-video" src="https://youtu.be/Fiy7YDaXUz4" />
+          <EmbedVideo className="tutor-video" src="https://youtu.be/YGE-GxArA-M" />
+          <EmbedVideo className="tutor-video" src="https://youtu.be/LBGhu2G6_m4" />
+          <EmbedVideo className="tutor-video" src="https://youtu.be/8JOHkP3XntA" />
         </VideoWrapper>
       </Page>
     </>
