@@ -24,8 +24,6 @@ import {
 } from './views/AddLiquidity/redirects'
 import RedirectOldRemoveLiquidityPathStructure from './views/RemoveLiquidity/redirects'
 import { RedirectPathToSwapOnly, RedirectToSwap } from './views/Swap/redirects'
-import { isObjectLike } from 'lodash'
-
 // Route-based code splitting
 // Only pool is included in the main bundle because of it's the most visited page
 const Home = lazy(() => import('./views/Home'))
@@ -58,7 +56,7 @@ BigNumber.config({
 const IconChanger = () => {
   // var menu = document.getElementsByTagName("a[href='/tutorials']");
   const menu = document.querySelector("a[href='/tutorials']");
-  let icon = menu?.querySelector("svg");
+  const icon = menu?.querySelector("svg");
   if(icon)
   icon.outerHTML = `
   <svg xmlns="http://www.w3.org/2000/svg" x="0px" y="0px"

@@ -37,28 +37,28 @@ export default function Tutorials() {
       <Page>
         <VideoWrapper>
           <EmbedVideo
-            src={`https://www.youtube.com/embed/Fiy7YDaXUz4`}
+            src="https://www.youtube.com/embed/Fiy7YDaXUz4"
             frameBorder="0"
             allow="accelerometer; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
             allowFullScreen
             title="How to SWAP RUBY"
           />
           <EmbedVideo
-            src={`https://www.youtube.com/embed/YGE-GxArA-M`}
+            src="https://www.youtube.com/embed/YGE-GxArA-M"
             frameBorder="0"
             allow="accelerometer; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
             allowFullScreen
             title="How to Add liquidity"
           />
           <EmbedVideo
-            src={`https://www.youtube.com/embed/LBGhu2G6_m4`}
+            src="https://www.youtube.com/embed/LBGhu2G6_m4"
             frameBorder="0"
             allow="accelerometer; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
             allowFullScreen
             title="how to FARM RUBY"
           />
           <EmbedVideo
-            src={`https://www.youtube.com/embed/8JOHkP3XntA`}
+            src="https://www.youtube.com/embed/8JOHkP3XntA"
             frameBorder="0"
             allow="accelerometer; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
             allowFullScreen
