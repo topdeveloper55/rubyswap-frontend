@@ -23,6 +23,7 @@ import {
   getLotteryV2Contract,
   getBunnySpecialCakeVaultContract,
   getBunnySpecialPredictionContract,
+  getTfthContract,
 } from 'utils/contractHelpers'
 
 // Imports below migrated from Exchange useContract.ts
@@ -154,6 +155,10 @@ export const useSpecialBunnyPredictionContract = () => {
   return useMemo(() => getBunnySpecialPredictionContract(library.getSigner()), [library])
 }
 
+export const useTfthContract = () => {
+  const { library } = useActiveWeb3React()
+  return useMemo(() => getTfthContract(library.getSigner()), [library])
+}
 // Code below migrated from Exchange useContract.ts
 
 // returns null on errors

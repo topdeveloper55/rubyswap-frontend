@@ -62,3 +62,6 @@ export const getBunnySpecialCakeVaultAddress = () => {
 export const getBunnySpecialPredictionAddress = () => {
   return getAddress(addresses.bunnySpecialPrediction)
 }
+export const getTfthAddress = () => {
+  return getAddress(addresses.tfth)
+}

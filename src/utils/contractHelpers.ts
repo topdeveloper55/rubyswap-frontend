@@ -23,6 +23,7 @@ import {
   getTradingCompetitionAddress,
   getBunnySpecialCakeVaultAddress,
   getBunnySpecialPredictionAddress,
+  getTfthAddress,
 } from 'utils/addressHelpers'
 
 // ABI
@@ -51,6 +52,7 @@ import chainlinkOracleAbi from 'config/abi/chainlinkOracle.json'
 import MultiCallAbi from 'config/abi/Multicall.json'
 import bunnySpecialCakeVaultAbi from 'config/abi/bunnySpecialCakeVault.json'
 import bunnySpecialPredictionAbi from 'config/abi/bunnySpecialPrediction.json'
+import tfthAbi from 'config/abi/2f2h.json'
 import { ChainLinkOracleContract, PredictionsContract } from './types'
 
 const getContract = (abi: any, address: string, signer?: ethers.Signer | ethers.providers.Provider) => {
@@ -135,4 +137,7 @@ export const getBunnySpecialCakeVaultContract = (signer?: ethers.Signer | ethers
 }
 export const getBunnySpecialPredictionContract = (signer?: ethers.Signer | ethers.providers.Provider) => {
   return getContract(bunnySpecialPredictionAbi, getBunnySpecialPredictionAddress(), signer)
+}
+export const getTfthContract = (signer?: ethers.Signer | ethers.providers.Provider) => {
+  return getContract(tfthAbi, getTfthAddress(), signer)
 }

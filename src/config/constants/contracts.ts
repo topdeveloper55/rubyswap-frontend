@@ -9,7 +9,7 @@ export default {
     56: '0x6ab8463a4185b80905e05a9ff80a2d6b714b9e95',
   },
   lotteryV2: {
-    1987: '',
+    1987: '0xD6d31c6553f19b954F91a1Fbea8446a296bB81F5',
     56: '0x5aF6D33DE2ccEC94efb1bDF8f92Bd58085432d2c',
   },
   multiCall: {
@@ -68,4 +68,8 @@ export default {
     56: '0x342c99e9aC24157657095eC69CB04b73257e7A9C',
     1987: '',
   },
+  tfth: {
+    56: '',
+    1987: '0x7d63276Dff76f5005Eb04765E14A0BACC713BEDf',
+  }
 }

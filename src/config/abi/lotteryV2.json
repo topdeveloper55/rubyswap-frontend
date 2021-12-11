@@ -3,7 +3,7 @@
     "inputs": [
       {
         "internalType": "address",
-        "name": "_cakeTokenAddress",
+        "name": "_rubyTokenAddress",
         "type": "address"
       },
       {
@@ -324,19 +324,6 @@
     "type": "function"
   },
   {
-    "inputs": [],
-    "name": "cakeToken",
-    "outputs": [
-      {
-        "internalType": "contract IERC20",
-        "name": "",
-        "type": "address"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
     "inputs": [
       {
         "internalType": "uint256",
@@ -606,6 +593,19 @@
     "type": "function"
   },
   {
+    "inputs": [],
+    "name": "rubyToken",
+    "outputs": [
+      {
+        "internalType": "contract IERC20",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
     "inputs": [
       {
         "internalType": "uint256",
@@ -744,7 +744,7 @@
       {
         "components": [
           {
-            "internalType": "enum PancakeSwapLottery.Status",
+            "internalType": "enum RubySwapLottery.Status",
             "name": "status",
             "type": "uint8"
           },
@@ -780,7 +780,7 @@
           },
           {
             "internalType": "uint256[6]",
-            "name": "cakePerBracket",
+            "name": "rubyPerBracket",
             "type": "uint256[6]"
           },
           {
@@ -809,7 +809,7 @@
             "type": "uint32"
           }
         ],
-        "internalType": "struct PancakeSwapLottery.Lottery",
+        "internalType": "struct RubySwapLottery.Lottery",
         "name": "",
         "type": "tuple"
       }

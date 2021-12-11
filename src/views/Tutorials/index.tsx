@@ -5,10 +5,12 @@ import Page from 'components/Layout/Page'
 import PageHeader from 'components/PageHeader'
 import { useTranslation } from 'contexts/Localization'
 
-const EmbedVideo = styled.iframe`
+const EmbedVideo = styled.div`
   width: 520px;
   height: 420px;
-  border-radius: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
 `
 const VideoWrapper = styled.div`
   display: flex;
@@ -18,6 +20,17 @@ const VideoWrapper = styled.div`
   justify-content: center;
 `
 
+const VideoTitle = styled.div`
+  color: #ec1654;
+  font-size: 24px;
+  font-weight: 600;
+  line-height: 1.1;
+`
+const VideoContent = styled.iframe`
+  width: 100%;
+  height: 100%;
+  border-radius: 12px;
+`
 export default function Tutorials() {
   const { t } = useTranslation();
   return (
@@ -36,34 +49,46 @@ export default function Tutorials() {
       </PageHeader>
       <Page>
         <VideoWrapper>
-          <EmbedVideo
-            src="https://www.youtube.com/embed/Fiy7YDaXUz4"
-            frameBorder="0"
-            allow="accelerometer; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-            allowFullScreen
-            title="How to SWAP RUBY"
-          />
-          <EmbedVideo
-            src="https://www.youtube.com/embed/YGE-GxArA-M"
-            frameBorder="0"
-            allow="accelerometer; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-            allowFullScreen
-            title="How to Add liquidity"
-          />
-          <EmbedVideo
-            src="https://www.youtube.com/embed/LBGhu2G6_m4"
-            frameBorder="0"
-            allow="accelerometer; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-            allowFullScreen
-            title="how to FARM RUBY"
-          />
-          <EmbedVideo
-            src="https://www.youtube.com/embed/8JOHkP3XntA"
-            frameBorder="0"
-            allow="accelerometer; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-            allowFullScreen
-            title="How to STAKE RUBY"
-          />
+          <EmbedVideo>
+            <VideoTitle>How to SWAP RUBY</VideoTitle>
+            <VideoContent
+              src="https://www.youtube.com/embed/Fiy7YDaXUz4"
+              frameBorder="0"
+              allow="accelerometer; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+              allowFullScreen
+              title="How to SWAP RUBY"
+            />
+          </EmbedVideo>
+          <EmbedVideo>
+            <VideoTitle>How to ADD liquidity</VideoTitle>
+            <VideoContent
+              src="https://www.youtube.com/embed/YGE-GxArA-M"
+              frameBorder="0"
+              allow="accelerometer; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+              allowFullScreen
+              title="How to Add liquidity"
+            />
+          </EmbedVideo>
+          <EmbedVideo>
+            <VideoTitle>How to FARM RUBY</VideoTitle>
+            <VideoContent
+              src="https://www.youtube.com/embed/LBGhu2G6_m4"
+              frameBorder="0"
+              allow="accelerometer; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+              allowFullScreen
+              title="How to FARM RUBY"
+            />          
+          </EmbedVideo>
+          <EmbedVideo>
+            <VideoTitle>How to STAKE RUBY</VideoTitle>
+            <VideoContent
+              src="https://www.youtube.com/embed/8JOHkP3XntA"
+              frameBorder="0"
+              allow="accelerometer; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+              allowFullScreen
+              title="How to STAKE RUBY"
+            />
+          </EmbedVideo>
         </VideoWrapper>
       </Page>
     </>

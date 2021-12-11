@@ -97,7 +97,7 @@ export interface SelectProps {
 }
 
 export interface OptionProps {
-  label: string
+  label: any
   value: any
 }
 
@@ -150,7 +150,7 @@ const Select: React.FunctionComponent<SelectProps> = ({ options, onChange }) => 
         <DropDownList ref={dropdownRef}>
           {options.map((option, index) =>
             index !== selectedOptionIndex ? (
-              <ListItem onClick={onOptionClicked(index)} key={option.label}>
+              <ListItem onClick={onOptionClicked(index)} key={option.value}>
                 <Text>{option.label}</Text>
               </ListItem>
             ) : null,
