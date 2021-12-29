@@ -5,12 +5,12 @@ import Page from 'components/Layout/Page'
 import PageHeader from 'components/PageHeader'
 import Select, { OptionProps } from 'components/Select/Select'
 import { useTranslation } from 'contexts/Localization'
-
-import { tokens } from './tokenList.json'
 import { useTfthContract } from 'hooks/useContract'
 import { ethers } from 'ethers'
 import useActiveWeb3React from 'hooks/useActiveWeb3React'
 import { useWeb3React } from '@web3-react/core'
+import { tokens } from './tokenList.json'
+
 const apikey = "076c60bf-47e5-4fba-8dd6-262eff0cedb7"
 const StaticInput = styled(Text)`
   background-color: ${({ theme }) => theme.colors.input};
@@ -151,11 +151,7 @@ export default function TFTH() {
 
   const unatomic = (value, decimals) => {
     value = value.padStart(decimals + 1, "0");
-    let temp = (
-      value.substr(0, value.length - decimals) +
-      "." +
-      value.substr(value.length - decimals)
-    );
+    let temp = `${value.substr(0, value.length - decimals)}.${value.substr(value.length - decimals)}`;
     while (temp[0] === "0") {
       temp = temp.substr(1);
     }
@@ -166,9 +162,9 @@ export default function TFTH() {
       temp = temp.slice(0, -1);
     }
     if (temp.startsWith(".")) {
-      temp = "0" + temp;
+      temp = `0${temp}`;
     }
-    if (temp == "") {
+    if (temp === "") {
       return "0";
     }
     return temp;
@@ -198,12 +194,12 @@ export default function TFTH() {
     setTotalShare(_totalShares.toString())
     const _sharePrice = await tfthContract.getSharePrice()
     setSharePrice(unatomic(_sharePrice.toString(), 18))
-    let sharePrice = _sharePrice.mul(ethers.BigNumber.from(20)).div(ethers.BigNumber.from(19)).add(ethers.BigNumber.from(1))
-    setPruchasableShare((await library.getBalance(account)).div(sharePrice).toString())
+    const pSharePrice = _sharePrice.mul(ethers.BigNumber.from(20)).div(ethers.BigNumber.from(19)).add(ethers.BigNumber.from(1))
+    setPruchasableShare((await library.getBalance(account)).div(pSharePrice).toString())
   }
   const withdraw = async () => {
-    let sellShares = share;
-    if ((sellShares === 0) || (sellShares !== sellShares)) {
+    const sellShares = share;
+    if ((sellShares === 0) || !!sellShares) {
       onInvalidNumber()
       // alert("Invalid number to sell.")
       return;
@@ -218,12 +214,11 @@ export default function TFTH() {
     setShare(0)
   }
   const deposit = async () => {
-    let buyShares = share
-    if ((buyShares === 0) || (buyShares !== buyShares)) {
+    const buyShares = share
+    if ((buyShares === 0) || !!buyShares) {
       onInvalidNumber()
       return;
     }
-
     const sending = ethers.BigNumber.from(atomic(sharePrice, 18)).mul(ethers.BigNumber.from(buyShares)).mul(ethers.BigNumber.from(20)).div(ethers.BigNumber.from(19)).add(ethers.BigNumber.from(1))
     const tx = await tfthContract.deposit(buyShares - 1, { from: account, value: sending})
     await tx.wait()
@@ -261,7 +256,7 @@ export default function TFTH() {
         value: token.asset ? token.asset : `noasset${token.symbol}`
       }
     })
-  }, [tokens])
+  }, [])
   return (
     <>
       <PageHeader>
