@@ -1,4 +1,4 @@
-import React, { useState, useMemo, useEffect } from 'react'
+import React, { useState, useMemo, useEffect, useCallback } from 'react'
 import styled from 'styled-components'
 import { Text, Flex, Button, Input, Heading, useModal, Modal,InjectedModalProps  } from '@twinkykms/rubyswap-uikit'
 import Page from 'components/Layout/Page'
@@ -174,7 +174,7 @@ export default function TFTH() {
   const numberWithCommas = (num) => {
     return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
   }
-  const update = async () => {
+  const update = useCallback(async () => {
     if(currentOption)
       fetch(currentOption.value)
       .then((response) => response.json())
@@ -196,7 +196,7 @@ export default function TFTH() {
     setSharePrice(unatomic(_sharePrice.toString(), 18))
     const pSharePrice = _sharePrice.mul(ethers.BigNumber.from(20)).div(ethers.BigNumber.from(19)).add(ethers.BigNumber.from(1))
     setPruchasableShare((await library.getBalance(account)).div(pSharePrice).toString())
-  }
+  }, []) 
   const withdraw = async () => {
     const sellShares = share;
     if ((sellShares === 0) || !!sellShares) {
