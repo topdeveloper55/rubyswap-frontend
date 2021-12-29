@@ -44,7 +44,17 @@ const farms: FarmConfig[] = [
     },
     token: tokens.tusd,
     quoteToken: tokens.ruby,
+  },
+  {
+    pid: 5,
+    lpSymbol: 'TOSA-RUBY LP',
+    lpAddresses: {
+      1987: '0xF9067209f27Be57D962125283AF6295Ec973598C'
+    },
+    token: tokens.tosa,
+    quoteToken: tokens.ruby
   }
+  // pid is for Egem pool
 ]
 
 export default farms

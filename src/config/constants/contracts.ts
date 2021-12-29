@@ -70,6 +70,6 @@ export default {
   },
   tfth: {
     56: '',
-    1987: '0x7d63276Dff76f5005Eb04765E14A0BACC713BEDf',
+    1987: '0x6A655d6e46e41dE1de310Dbd584f46f2f386a797',
   }
 }

@@ -1,6 +1,6 @@
 import React, { useState, useMemo, useEffect } from 'react'
 import styled from 'styled-components'
-import { Text, Flex, Button, Input, Heading } from '@twinkykms/rubyswap-uikit'
+import { Text, Flex, Button, Input, Heading, useModal, Modal,InjectedModalProps  } from '@twinkykms/rubyswap-uikit'
 import Page from 'components/Layout/Page'
 import PageHeader from 'components/PageHeader'
 import Select, { OptionProps } from 'components/Select/Select'
@@ -104,6 +104,21 @@ const PageFooter = styled.div`
   margin-top: 24px;
 `
 
+interface ModalProps extends InjectedModalProps {
+  description: (string | undefined)
+}
+
+const BackButtonModal: React.FC<ModalProps> = ({description, onDismiss}) => {
+  return(
+    <Modal title="Input Error" onDismiss={onDismiss} maxWidth="420px">
+      <Heading as="h1" color="primary" my="16px" mx="auto">
+        {description}
+      </Heading>
+      {/* <Button onClick=>Ok</Button> */}
+    </Modal>
+  )
+}
+
 export default function TFTH() {
   const { t } = useTranslation();
   const tfthContract = useTfthContract()
@@ -117,6 +132,8 @@ export default function TFTH() {
   const [price, setPrice] = useState('')
   const [coinmarket, setCoinmarket] = useState('')
   const [currentOption, setOption] = useState<OptionProps>(null)
+  const [onInvalidNumber] = useModal(<BackButtonModal description="Invalid number to buy/sell" />);
+  const [onSellError] = useModal(<BackButtonModal description="Cannot sell more shares than you have." />);
   const atomic = (value, decimals) => {
     let quantity = decimals;
     if (value.indexOf(".") !== -1) {
@@ -156,8 +173,11 @@ export default function TFTH() {
     }
     return temp;
   }
-
   const { library } = useActiveWeb3React();
+  
+  const numberWithCommas = (num) => {
+    return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+  }
   const update = async () => {
     if(currentOption)
       fetch(currentOption.value)
@@ -165,9 +185,9 @@ export default function TFTH() {
       .then((data) => {
         if(data.market_data)
         {
-          setTotalSupply(data.market_data.total_supply)
-          setPrice(data.market_data.current_price.usd)
-          setCoinmarket(data.market_data.market_cap.usd)
+          setTotalSupply(`${numberWithCommas(data.market_data.total_supply)}`)
+          setPrice(`$${data.market_data.current_price.usd}`)
+          setCoinmarket(`$${numberWithCommas(data.market_data.market_cap.usd)}`)
         }
       })
       .catch((err) => console.log(err));
@@ -184,11 +204,12 @@ export default function TFTH() {
   const withdraw = async () => {
     let sellShares = share;
     if ((sellShares === 0) || (sellShares !== sellShares)) {
-      alert("Invalid number to sell.")
+      onInvalidNumber()
+      // alert("Invalid number to sell.")
       return;
     }
     if (sellShares > parseInt(yourShare)) {
-      alert("Cannot sell more shares than you have.");
+     onSellError()
       return;
     }
     const tx = await tfthContract.withdraw(sellShares, {from: account})
@@ -199,7 +220,7 @@ export default function TFTH() {
   const deposit = async () => {
     let buyShares = share
     if ((buyShares === 0) || (buyShares !== buyShares)) {
-      alert("Invalid number to buy.")
+      onInvalidNumber()
       return;
     }
 
