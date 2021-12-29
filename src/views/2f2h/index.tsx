@@ -150,8 +150,8 @@ export default function TFTH() {
   }
 
   const unatomic = (value, decimals) => {
-    value = value.padStart(decimals + 1, "0");
-    let temp = `${value.substr(0, value.length - decimals)}.${value.substr(value.length - decimals)}`;
+    const  _value = value.padStart(decimals + 1, "0");
+    let temp = `${_value.substr(0, _value.length - decimals)}.${_value.substr(_value.length - decimals)}`;
     while (temp[0] === "0") {
       temp = temp.substr(1);
     }
@@ -235,7 +235,7 @@ export default function TFTH() {
       setTimer((prev) => prev + 1)
       startUpdating()
     }, 5000)
-  }, [timer])
+  }, [timer, update])
   const handleTokenChange = (option: OptionProps): void => {
     if(option.value.includes('noasset')) setOption(null)
     setOption(option);
