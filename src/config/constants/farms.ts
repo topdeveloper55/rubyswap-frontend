@@ -63,8 +63,10 @@ const farms: FarmConfig[] = [
     token: tokens.tosa,
     quoteToken: tokens.ruby
   }
-  //1,6,7 are empty farms
-  //5 is 0 reward farm
+  /**
+  *1,6,7 are empty farms
+  *5 is 0 reward farm
+  */
 ]
 
 export default farms
