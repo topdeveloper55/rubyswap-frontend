@@ -196,7 +196,7 @@ export default function TFTH() {
     setSharePrice(unatomic(_sharePrice.toString(), 18))
     const pSharePrice = _sharePrice.mul(ethers.BigNumber.from(20)).div(ethers.BigNumber.from(19)).add(ethers.BigNumber.from(1))
     setPruchasableShare((await library.getBalance(account)).div(pSharePrice).toString())
-  }, [account, currentOption, tfthContract]) 
+  }, [account, currentOption, tfthContract, library]) 
   const withdraw = async () => {
     const sellShares = share;
     if ((sellShares === 0) || !!sellShares) {
