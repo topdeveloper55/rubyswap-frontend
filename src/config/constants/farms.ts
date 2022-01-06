@@ -47,14 +47,24 @@ const farms: FarmConfig[] = [
   },
   {
     pid: 5,
-    lpSymbol: 'TOSA-RUBY LP',
+    lpSymbol: 'TOSA-EGEM(0-Reward) LP',
     lpAddresses: {
       1987: '0xF9067209f27Be57D962125283AF6295Ec973598C'
     },
     token: tokens.tosa,
+    quoteToken: tokens.wegem
+  },
+  {
+    pid: 8,
+    lpSymbol: 'TOSA-RUBY LP',
+    lpAddresses: {
+      1987: '0xeA43DCa40d6D43bc831655661e9eA28fae9e67f2'
+    },
+    token: tokens.tosa,
     quoteToken: tokens.ruby
   }
-  // pid is for Egem pool
+  //1,6,7 are empty farms
+  //5 is 0 reward farm
 ]
 
 export default farms

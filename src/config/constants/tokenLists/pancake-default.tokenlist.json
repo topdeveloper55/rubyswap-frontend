@@ -35,6 +35,14 @@
       "logoURI": "https://raw.githubusercontent.com/top1st/token-assets/main/png/ruby.png"
     },
     {
+      "name": "WBNB",
+      "symbol": "WBNB",
+      "address": "0x97271a78C9778F226C1c4eFe63876c04f8cD8F40",
+      "chainId": 1987,
+      "decimals": 18,
+      "logoURI": "https://assets.coingecko.com/coins/images/825/small/binance-coin-logo.png"
+    },
+    {
       "name": "TrueUSD",
       "symbol": "TUSD",
       "address": "0x33F4999ee298CAa16265E87f00e7A8671c01D870",
@@ -47,7 +55,7 @@
       "symbol": "TOSA",
       "address": "0x16D2A05Acc35c17B470fe6216D49145Cf85b00E8",
       "chainId": 1987,
-      "decimals": 18,
+      "decimals": 9,
       "logoURI": "https://ibb.co/Lv8H7cF"
     }
   ]

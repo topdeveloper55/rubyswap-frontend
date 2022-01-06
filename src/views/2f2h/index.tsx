@@ -333,7 +333,7 @@ export default function TFTH() {
               /> */}
             </LabelWrapper>
               <Heading as="h1" scale="xl" color="secondary" mb="24px">
-                {t('Comming Soon')}
+                {t('Coming Soon')}
               </Heading>
           </Form>
         </Row>
@@ -349,7 +349,7 @@ export default function TFTH() {
                 <img src="./images/discord.svg" alt="discord" />
               </a>
               <a
-                href="https://github.com/rubyswap"
+                href="https://github.com/2fast2hodl"
               >
                 <img src="./images/github.svg" alt="github" />
               </a>

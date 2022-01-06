@@ -98,7 +98,7 @@ const tokens = {
     address: {
       1987: "0x16D2A05Acc35c17B470fe6216D49145Cf85b00E8",
     },
-    decimals: 18
+    decimals: 9
   }
 }
 
