@@ -199,7 +199,7 @@ export default function TFTH() {
   }, [account, currentOption, tfthContract, library]) 
   const withdraw = async () => {
     const sellShares = share;
-    if ((sellShares === 0) || !!sellShares) {
+    if (sellShares === 0) {
       onInvalidNumber()
       // alert("Invalid number to sell.")
       return;
@@ -214,8 +214,9 @@ export default function TFTH() {
     setShare(0)
   }
   const deposit = async () => {
+    console.log("share", share)
     const buyShares = share
-    if ((buyShares === 0) || !!buyShares) {
+    if (buyShares === 0) {
       onInvalidNumber()
       return;
     }
