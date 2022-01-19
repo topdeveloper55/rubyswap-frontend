@@ -99,6 +99,7 @@ export interface SelectProps {
 export interface OptionProps {
   label: any
   value: any
+  id?: number
 }
 
 const Select: React.FunctionComponent<SelectProps> = ({ options, onChange }) => {

@@ -1,27 +1,33 @@
 {
  "tokens": [
     {
-      "name": "GEMine Token",
+      "id": 0,
+      "name": "Ethergem",
       "symbol": "EGEM",
-      "address": "0xaf017fe9C9770BdbDA1A014D5D6c87B364225Cd0",
+      "address": "",
+      "tfth_address": "0x6A655d6e46e41dE1de310Dbd584f46f2f386a797",
       "chainId": 1987,
       "decimals": 18,
       "logoURI": "https://raw.githubusercontent.com/top1st/token-assets/main/png/egem.png",
       "asset": "https://api.coingecko.com/api/v3/coins/ethergem?tickers=false&community_data=false&developer_data=false"
     },
     {
+      "id": 1,
       "name": "Ruby Token",
       "symbol": "RUBY",
       "address": "0xB6094af67bf43779ab704455c5DF02AD9141871B",
+      "tfth_address": "0x76f528A08CD0Ef7a68225a393E9648DfeFBDB10e",
       "chainId": 1987,
       "decimals": 18,
       "logoURI": "https://raw.githubusercontent.com/top1st/token-assets/main/png/ruby.png",
       "asset" : ""
     },
     {
+      "id": 2,
       "name": "TrueUSD",
       "symbol": "TUSD",
       "address": "0x33F4999ee298CAa16265E87f00e7A8671c01D870",
+      "tfth_address": "0x9d88c916871CCa3F142Fcfbd315999a5EA45bCa3",
       "chainId": 1987,
       "decimals": 18,
       "logoURI": "https://cryptologos.cc/logos/trueusd-tusd-logo.png?v=014",

@@ -5,13 +5,17 @@ import Page from 'components/Layout/Page'
 import PageHeader from 'components/PageHeader'
 import Select, { OptionProps } from 'components/Select/Select'
 import { useTranslation } from 'contexts/Localization'
-import { useTfthContract } from 'hooks/useContract'
+// import { useTfthContract } from 'hooks/useContract'
 import { ethers } from 'ethers'
 import useActiveWeb3React from 'hooks/useActiveWeb3React'
 import { useWeb3React } from '@web3-react/core'
 import { tokens } from './tokenList.json'
 
-const apikey = "076c60bf-47e5-4fba-8dd6-262eff0cedb7"
+import tfth_eth_Abi from 'config/abi/2f2h.json'
+import tfth_token_Abi from 'config/abi/2f2h_token.json'
+import erc20Abi from 'config/abi/erc20.json'
+import { MaxUint256 } from '@ethersproject/constants'
+
 const StaticInput = styled(Text)`
   background-color: ${({ theme }) => theme.colors.input};
   border-radius: 16px;
@@ -93,11 +97,6 @@ const Form = styled(Flex)`
   flex-grow: 1;
   gap: 18px;
 `
-const VideoContent = styled.iframe`
-  width: 100%;
-  height: 300px;
-  border-radius: 12px;
-`
 const PageFooter = styled.div`
   background: ${({theme}) => theme.colors.gradients.bubblegum};
   padding: 24px 16px;
@@ -121,7 +120,6 @@ const BackButtonModal: React.FC<ModalProps> = ({description, onDismiss}) => {
 
 export default function TFTH() {
   const { t } = useTranslation();
-  const tfthContract = useTfthContract()
   const { account } = useWeb3React()
   const [yourShare, setYourShare] = useState('')
   const [totalShare, setTotalShare] = useState('')
@@ -131,7 +129,36 @@ export default function TFTH() {
   const [share, setShare] = useState(0)
   const [price, setPrice] = useState('')
   const [coinmarket, setCoinmarket] = useState('')
-  const [currentOption, setOption] = useState<OptionProps>(null)
+  const [currentOption, setOption] = useState<OptionProps>({
+    label: "",
+    value: "",
+    id: 0
+  })
+  const [showEnable, setShowEnable] = useState(true)
+  useEffect(() => {
+    if(tokens.length) {
+      const option: OptionProps = {
+        label: "",
+        value: tokens[0].asset,
+        id: 0
+      }
+      setOption(option)
+    }
+  }, [])
+  const { library } = useActiveWeb3React()
+  const getTfthAddress = () => {
+    return tokens[currentOption.id].tfth_address
+  }
+  // const getContract = (abi: any, address: string, signer?: ethers.Signer | ethers.providers.Provider) => {
+  //   const signerOrProvider = signer ?? simpleRpcProvider
+  //   return new ethers.Contract(address, abi, signerOrProvider)
+  // }
+  // const getTfthContract = (signer?: ethers.Signer | ethers.providers.Provider) => {
+  //   return getContract(currentOption.id === 0 ? tfth_eth_Abi : tfth_token_Abi, getTfthAddress(), signer)
+  // }
+  const provider = new ethers.providers.Web3Provider(window.ethereum);
+  const signer = provider.getSigner();
+  const tfthContract = new ethers.Contract(getTfthAddress(), currentOption.id === 0 ? tfth_eth_Abi : tfth_token_Abi, signer)
   const [onInvalidNumber] = useModal(<BackButtonModal description="Invalid number to buy/sell" />);
   const [onSellError] = useModal(<BackButtonModal description="Cannot sell more shares than you have." />);
   const atomic = (value, decimals) => {
@@ -169,13 +196,13 @@ export default function TFTH() {
     }
     return temp;
   }
-  const { library } = useActiveWeb3React();
   
   const numberWithCommas = (num) => {
     return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
   }
-  const update = useCallback(async () => {
-    if(currentOption)
+  const update = async () => {
+    if(account === undefined) return
+    if(!currentOption.value.includes("noasset")){
       fetch(currentOption.value)
       .then((response) => response.json())
       .then((data) => {
@@ -186,8 +213,12 @@ export default function TFTH() {
           setCoinmarket(`$${numberWithCommas(data.market_data.market_cap.usd)}`)
         }
       })
-      .catch((err) => console.log(err));
-    if(account === undefined) return
+      .catch((err) => {console.log(err)})
+    } else {
+      setTotalSupply(`0`)
+      setPrice(`0`)
+      setCoinmarket(`0`)
+    }
     const _yourShares = await tfthContract.balanceOf(account)
     setYourShare(_yourShares.toString())
     const _totalShares = await tfthContract.getTotalShares()
@@ -195,8 +226,15 @@ export default function TFTH() {
     const _sharePrice = await tfthContract.getSharePrice()
     setSharePrice(unatomic(_sharePrice.toString(), 18))
     const pSharePrice = _sharePrice.mul(ethers.BigNumber.from(20)).div(ethers.BigNumber.from(19)).add(ethers.BigNumber.from(1))
-    setPruchasableShare((await library.getBalance(account)).div(pSharePrice).toString())
-  }, [account, currentOption, tfthContract, library]) 
+    let balance
+    if(currentOption.id === 0)
+      balance = await library.getBalance(account)
+    else {
+      const erc20 = new ethers.Contract(tokens[currentOption.id].address, erc20Abi, signer)
+      balance = await erc20.balanceOf(account);
+    }
+    setPruchasableShare(balance.div(pSharePrice).toString())
+  } 
   const withdraw = async () => {
     const sellShares = share;
     if (sellShares === 0) {
@@ -214,50 +252,65 @@ export default function TFTH() {
     setShare(0)
   }
   const deposit = async () => {
-    console.log("share", share)
     const buyShares = share
     if (buyShares === 0) {
       onInvalidNumber()
       return;
     }
     const sending = ethers.BigNumber.from(atomic(sharePrice, 18)).mul(ethers.BigNumber.from(buyShares)).mul(ethers.BigNumber.from(20)).div(ethers.BigNumber.from(19)).add(ethers.BigNumber.from(1))
-    const tx = await tfthContract.deposit(buyShares - 1, { from: account, value: sending})
+    let tx
+    if(currentOption.id === 0)
+      tx = await tfthContract.deposit(buyShares - 1, { from: account, value: sending})
+    else
+      tx = await tfthContract.deposit(buyShares - 1, sending)
     await tx.wait()
     await update()
     setShare(0)
   }
   const [ timer, setTimer ] = useState(0);
   useEffect(() => {
-    const startUpdating = async () => {
-      await update()
-    }
-    startUpdating()
-    window.setTimeout(() => {
+    update()
+    setTimeout( async () => {
       setTimer((prev) => prev + 1)
-      startUpdating()
-    }, 5000)
-  }, [timer, update])
-  const handleTokenChange = (option: OptionProps): void => {
-    if(option.value.includes('noasset')) setOption(null)
-    setOption(option);
-  }
+      // update()
+    }, 10000)
+  }, [timer])
   useEffect(() => {
-    if(tokens.length) {
-      const option: OptionProps = {
-        label: "",
-        value: tokens[0].asset
-      }
-      setOption(option)
-    }
-  }, [])
+    update()
+  }, [account])
+  const handleTokenChange = async (option: OptionProps) => {
+    // if(option.value.includes('noasset')) setOption(null)
+    setOption(option);
+    update()
+  }
+  
   const options = useMemo(() => {
     return tokens.map(token => {
       return {
         label: <TokenSymbol className={token.asset === "" ? "inactive" : null}><TokenLogo src={token.logoURI} alt="logo" />{token.symbol}</TokenSymbol>,
-        value: token.asset ? token.asset : `noasset${token.symbol}`
+        value: token.asset ? token.asset : `noasset${token.symbol}`,
+        id: token.id
       }
     })
   }, [])
+  useEffect(() => {
+    if(currentOption.id === 0) return
+    const checkApproved = async () => {
+      const erc20 = new ethers.Contract(tokens[currentOption.id].address, erc20Abi, signer)
+      const allowance = await erc20.allowance(account, tokens[currentOption.id].tfth_address);
+      if(allowance > ethers.BigNumber.from(atomic('1', 18))) return setShowEnable(false)
+      return setShowEnable(true)
+    }
+    checkApproved()
+  }, [currentOption, setShowEnable])
+  const approveToken = async () => {
+    const erc20 = new ethers.Contract(tokens[currentOption.id].address, erc20Abi, signer)
+    const allowance = await erc20.allowance(account, tokens[currentOption.id].tfth_address);
+    if(allowance < ethers.BigNumber.from(atomic('1', 18))) {
+      const approved = await erc20.approve(tokens[currentOption.id].tfth_address, MaxUint256)
+    }
+    else setShowEnable(false)
+  }
   return (
     <>
       <PageHeader>
@@ -296,10 +349,17 @@ export default function TFTH() {
               <Text textTransform="uppercase">{t('Shares')}</Text>
               <Input type="number" value={share} onChange={(e) => setShare(e.target.valueAsNumber)} />
             </LabelWrapper>
-            <ActionWrapper>
+            {
+              showEnable && currentOption.id !== 0 ? 
+              <ActionWrapper>
+                <Button onClick={approveToken} variant="success">Enable {tokens[currentOption.id].symbol}</Button>
+              </ActionWrapper> :
+              <ActionWrapper>
               <Button onClick={deposit} variant="success">Buy</Button>
               <Button onClick={withdraw} variant="success" >Sell</Button>
             </ActionWrapper>
+            }
+            
           </Form>
           <Form flexDirection="column">
             <Rect>
