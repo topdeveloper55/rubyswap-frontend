@@ -41,6 +41,11 @@ const config: (t: ContextApi['t']) => MenuEntry[] = (t) => [
     href: '/2f2h',
   },
   {
+    label: t('NFTs'),
+    icon: 'PoolIcon',
+    href: '/nft',
+  },
+  {
     label: t('Tutorials'),
     icon: 'InfoIcon',
     href: '/tutorials',

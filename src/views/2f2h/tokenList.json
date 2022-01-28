@@ -31,7 +31,7 @@
       "chainId": 1987,
       "decimals": 18,
       "logoURI": "https://cryptologos.cc/logos/trueusd-tusd-logo.png?v=014",
-      "asset": ""
+      "asset": "https://api.coingecko.com/api/v3/coins/true-usd?tickers=false&community_data=false&developer_data=false"
     }
   ]
 }

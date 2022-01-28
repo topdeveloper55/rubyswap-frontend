@@ -1,6 +1,6 @@
 import React, { useState, useMemo, useEffect, useCallback } from 'react'
 import styled from 'styled-components'
-import { Text, Flex, Button, Input, Heading, useModal, Modal,InjectedModalProps  } from '@twinkykms/rubyswap-uikit'
+import { Text, Flex, Button, Input, Heading, useModal, Modal,InjectedModalProps, Skeleton  } from '@twinkykms/rubyswap-uikit'
 import Page from 'components/Layout/Page'
 import PageHeader from 'components/PageHeader'
 import Select, { OptionProps } from 'components/Select/Select'
@@ -9,13 +9,15 @@ import { useTranslation } from 'contexts/Localization'
 import { ethers } from 'ethers'
 import useActiveWeb3React from 'hooks/useActiveWeb3React'
 import { useWeb3React } from '@web3-react/core'
+
+import TFTH_ETH_ABI from 'config/abi/2f2h.json'
+import TFTH_TOKEN_ABI from 'config/abi/2f2h_token.json'
+import ERC20_ABI from 'config/abi/erc20.json'
+import { MaxUint256 } from '@ethersproject/constants'
 import { tokens } from './tokenList.json'
 
-import tfth_eth_Abi from 'config/abi/2f2h.json'
-import tfth_token_Abi from 'config/abi/2f2h_token.json'
-import erc20Abi from 'config/abi/erc20.json'
-import { MaxUint256 } from '@ethersproject/constants'
-
+const LP_ADDRESS = "0x86B4B00CCB7afd1b1b96afe6dE9422d360e2fF5A"
+const BURN_ADDRESS = "0x000000000000000000000000000000000000dEaD"
 const StaticInput = styled(Text)`
   background-color: ${({ theme }) => theme.colors.input};
   border-radius: 16px;
@@ -117,6 +119,7 @@ const BackButtonModal: React.FC<ModalProps> = ({description, onDismiss}) => {
     </Modal>
   )
 }
+let timeout;
 
 export default function TFTH() {
   const { t } = useTranslation();
@@ -129,6 +132,7 @@ export default function TFTH() {
   const [share, setShare] = useState(0)
   const [price, setPrice] = useState('')
   const [coinmarket, setCoinmarket] = useState('')
+  const [loading, setLoading] = useState(true)
   const [currentOption, setOption] = useState<OptionProps>({
     label: "",
     value: "",
@@ -154,11 +158,11 @@ export default function TFTH() {
   //   return new ethers.Contract(address, abi, signerOrProvider)
   // }
   // const getTfthContract = (signer?: ethers.Signer | ethers.providers.Provider) => {
-  //   return getContract(currentOption.id === 0 ? tfth_eth_Abi : tfth_token_Abi, getTfthAddress(), signer)
+  //   return getContract(currentOption.id === 0 ? TFTH_ETH_ABI : TFTH_TOKEN_ABI, getTfthAddress(), signer)
   // }
   const provider = new ethers.providers.Web3Provider(window.ethereum);
   const signer = provider.getSigner();
-  const tfthContract = new ethers.Contract(getTfthAddress(), currentOption.id === 0 ? tfth_eth_Abi : tfth_token_Abi, signer)
+  const tfthContract = new ethers.Contract(getTfthAddress(), currentOption.id === 0 ? TFTH_ETH_ABI : TFTH_TOKEN_ABI, signer)
   const [onInvalidNumber] = useModal(<BackButtonModal description="Invalid number to buy/sell" />);
   const [onSellError] = useModal(<BackButtonModal description="Cannot sell more shares than you have." />);
   const atomic = (value, decimals) => {
@@ -196,7 +200,6 @@ export default function TFTH() {
     }
     return temp;
   }
-  
   const numberWithCommas = (num) => {
     return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
   }
@@ -208,16 +211,31 @@ export default function TFTH() {
       .then((data) => {
         if(data.market_data)
         {
-          setTotalSupply(`${numberWithCommas(data.market_data.total_supply)}`)
-          setPrice(`$${data.market_data.current_price.usd}`)
-          setCoinmarket(`$${numberWithCommas(data.market_data.market_cap.usd)}`)
+          setTotalSupply(`${numberWithCommas((+data.market_data.total_supply).toFixed(2))}`)
+          setPrice(`$${numberWithCommas((+data.market_data.current_price.usd).toFixed(2))}`)
+          setCoinmarket(`$${numberWithCommas((+data.market_data.market_cap.usd).toFixed(2))}`)
         }
       })
       .catch((err) => {console.log(err)})
     } else {
-      setTotalSupply(`0`)
-      setPrice(`0`)
-      setCoinmarket(`0`)
+      if(currentOption.id === 1) {
+        const rubyContract = new ethers.Contract(tokens[1].address, ERC20_ABI, signer)
+        const tusdContract = new ethers.Contract(tokens[2].address, ERC20_ABI, signer)
+        const rubyBalance = await rubyContract.balanceOf(LP_ADDRESS)
+        const tusdBalance = await tusdContract.balanceOf(LP_ADDRESS)
+        const burnedRuby = await rubyContract.balanceOf(BURN_ADDRESS)
+        const rubyTotalSupply = (await rubyContract.totalSupply()).sub(burnedRuby)
+        
+        setTotalSupply(numberWithCommas((+unatomic(rubyTotalSupply.toString(), 18)).toFixed(2)))
+        let priceStr = tusdBalance.mul(ethers.BigNumber.from(9975)).mul(ethers.BigNumber.from(1e14)).sub(ethers.BigNumber.from(1)).div(rubyBalance);
+        setPrice(`$${numberWithCommas((+ethers.utils.formatEther(priceStr.toString())).toFixed(2))}`)
+        setCoinmarket(`$${numberWithCommas((+unatomic(priceStr.mul(rubyTotalSupply).toString(), 36)).toFixed(2))}`)
+      }
+      else {
+        setTotalSupply(`0`)
+        setPrice(`0`)
+        setCoinmarket(`0`)
+      }
     }
     const _yourShares = await tfthContract.balanceOf(account)
     setYourShare(_yourShares.toString())
@@ -230,10 +248,11 @@ export default function TFTH() {
     if(currentOption.id === 0)
       balance = await library.getBalance(account)
     else {
-      const erc20 = new ethers.Contract(tokens[currentOption.id].address, erc20Abi, signer)
+      const erc20 = new ethers.Contract(tokens[currentOption.id].address, ERC20_ABI, signer)
       balance = await erc20.balanceOf(account);
     }
     setPruchasableShare(balance.div(pSharePrice).toString())
+    setLoading(false);
   } 
   const withdraw = async () => {
     const sellShares = share;
@@ -269,25 +288,31 @@ export default function TFTH() {
   }
   const [ timer, setTimer ] = useState(0);
   useEffect(() => {
-    update()
-    setTimeout( async () => {
-      setTimer((prev) => prev + 1)
-      // update()
-    }, 10000)
-  }, [timer])
+    if(account) {
+      update()
+      clearTimeout(timeout)
+      timeout = setTimeout( async () => {
+        setTimer((prev) => prev + 1)
+        // update()
+      }, 10000)
+    }
+    
+  }, [timer, currentOption, account])
   useEffect(() => {
     update()
-  }, [account])
+  }, [])
   const handleTokenChange = async (option: OptionProps) => {
     // if(option.value.includes('noasset')) setOption(null)
-    setOption(option);
-    update()
+    clearTimeout(timeout)
+    setLoading(true)
+    setOption(option)
+    // update()
   }
   
   const options = useMemo(() => {
     return tokens.map(token => {
       return {
-        label: <TokenSymbol className={token.asset === "" ? "inactive" : null}><TokenLogo src={token.logoURI} alt="logo" />{token.symbol}</TokenSymbol>,
+        label: <TokenSymbol><TokenLogo src={token.logoURI} alt="logo" />{token.symbol}</TokenSymbol>,
         value: token.asset ? token.asset : `noasset${token.symbol}`,
         id: token.id
       }
@@ -296,7 +321,7 @@ export default function TFTH() {
   useEffect(() => {
     if(currentOption.id === 0) return
     const checkApproved = async () => {
-      const erc20 = new ethers.Contract(tokens[currentOption.id].address, erc20Abi, signer)
+      const erc20 = new ethers.Contract(tokens[currentOption.id].address, ERC20_ABI, signer)
       const allowance = await erc20.allowance(account, tokens[currentOption.id].tfth_address);
       if(allowance > ethers.BigNumber.from(atomic('1', 18))) return setShowEnable(false)
       return setShowEnable(true)
@@ -304,7 +329,7 @@ export default function TFTH() {
     checkApproved()
   }, [currentOption, setShowEnable])
   const approveToken = async () => {
-    const erc20 = new ethers.Contract(tokens[currentOption.id].address, erc20Abi, signer)
+    const erc20 = new ethers.Contract(tokens[currentOption.id].address, ERC20_ABI, signer)
     const allowance = await erc20.allowance(account, tokens[currentOption.id].tfth_address);
     if(allowance < ethers.BigNumber.from(atomic('1', 18))) {
       const approved = await erc20.approve(tokens[currentOption.id].tfth_address, MaxUint256)
@@ -330,19 +355,19 @@ export default function TFTH() {
           <Form flexDirection="column" >
             <LabelWrapper>
               <Text textTransform="uppercase">{t('Your Shares')}</Text>
-              <StaticInput>{yourShare}</StaticInput>
+              <StaticInput>{loading ? <Skeleton width="100%" height="100%" /> : yourShare}</StaticInput>
             </LabelWrapper>
             <LabelWrapper>
               <Text textTransform="uppercase">{t('Total Shares')}</Text>
-              <StaticInput>{totalShare}</StaticInput>
+              <StaticInput>{loading ? <Skeleton width="100%" height="100%" /> : totalShare}</StaticInput>
             </LabelWrapper>
             <LabelWrapper>
               <Text textTransform="uppercase">{t('Share Price')}</Text>
-              <StaticInput>{sharePrice.substr(0, 5)}</StaticInput>
+              <StaticInput>{loading ? <Skeleton width="100%" height="100%" /> : sharePrice.substr(0, 5)}</StaticInput>
             </LabelWrapper>
             <LabelWrapper>
               <Text textTransform="uppercase">{t('Purchasable Shares')}</Text>
-              <StaticInput mb={4}>{purchasableShare}</StaticInput>
+              <StaticInput mb={4}>{loading ? <Skeleton width="100%" height="100%" /> : purchasableShare}</StaticInput>
             </LabelWrapper>
             <Divider />
             <LabelWrapper>
@@ -372,15 +397,15 @@ export default function TFTH() {
               </InlineLabelWrapper>
               <InlineLabelWrapper>
                 <Text textTransform="uppercase">{t('Total Supply')}</Text>
-                <StaticInput>{totalSupply}</StaticInput>
+                <StaticInput>{loading ? <Skeleton width="100%" height="100%" /> : totalSupply}</StaticInput>
               </InlineLabelWrapper>
               <InlineLabelWrapper>
                 <Text textTransform="uppercase">{t('Price')}</Text>
-                <StaticInput>{price}</StaticInput>
+                <StaticInput>{loading ? <Skeleton width="100%" height="100%" /> : price}</StaticInput>
               </InlineLabelWrapper>
               <InlineLabelWrapper>
                 <Text textTransform="uppercase">{t('MarketCap')}</Text>
-                <StaticInput>{coinmarket}</StaticInput>
+                <StaticInput>{loading ? <Skeleton width="100%" height="100%" /> : coinmarket}</StaticInput>
               </InlineLabelWrapper>
             </Rect>
             <LabelWrapper>
