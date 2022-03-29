@@ -42,7 +42,7 @@ const EasterNftCard: React.FC<NftCardProps> = ({ nft, ...props }) => {
     }
   }, [account, identifier, team, easterNftContract, setIsClaimable])
 
-  return <NftCard nft={nft} {...props} canClaim={isClaimable} onClaim={handleClaim} />
+  return <NftCard nft={nft} {...props} />
 }
 
 export default EasterNftCard

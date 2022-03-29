@@ -7,7 +7,7 @@ import { getAddressByType } from 'utils/collectibles'
 import { getPancakeProfileAddress } from 'utils/addressHelpers'
 import { getErc721Contract } from 'utils/contractHelpers'
 import { useTranslation } from 'contexts/Localization'
-import { useGetCollectibles } from 'state/hooks'
+// import { useGetCollectibles } from 'state/hooks'
 import useToast from 'hooks/useToast'
 import SelectionCard from '../components/SelectionCard'
 import NextStepButton from '../components/NextStepButton'
@@ -28,7 +28,7 @@ const ProfilePicture: React.FC = () => {
   const { selectedNft, actions } = useContext(ProfileCreationContext)
 
   const { t } = useTranslation()
-  const { isLoading, nftsInWallet, tokenIds } = useGetCollectibles()
+  // const { isLoading, nftsInWallet, tokenIds } = useGetCollectibles()
   const { toastError } = useToast()
 
   const handleApprove = async () => {
@@ -45,23 +45,23 @@ const ProfilePicture: React.FC = () => {
     }
   }
 
-  if (!isLoading && nftsInWallet.length === 0) {
-    return (
-      <>
-        <Heading scale="xl" mb="24px">
-          {t('Oops!')}
-        </Heading>
-        <Text bold fontSize="20px" mb="24px">
-          {t('We couldn’t find any Rubyswap Collectibles in your wallet.')}
-        </Text>
-        <Text as="p">
-          {t(
-            'You need a Rubyswap Collectible to finish setting up your profile. If you sold or transferred your starter collectible to another wallet, you’ll need to get it back or acquire a new one somehow. You can’t make a new starter with this wallet address.',
-          )}
-        </Text>
-      </>
-    )
-  }
+  // if (!isLoading && nftsInWallet.length === 0) {
+  //   return (
+  //     <>
+  //       <Heading scale="xl" mb="24px">
+  //         {t('Oops!')}
+  //       </Heading>
+  //       <Text bold fontSize="20px" mb="24px">
+  //         {t('We couldn’t find any Rubyswap Collectibles in your wallet.')}
+  //       </Text>
+  //       <Text as="p">
+  //         {t(
+  //           'You need a Rubyswap Collectible to finish setting up your profile. If you sold or transferred your starter collectible to another wallet, you’ll need to get it back or acquire a new one somehow. You can’t make a new starter with this wallet address.',
+  //         )}
+  //       </Text>
+  //     </>
+  //   )
+  // }
 
   return (
     <>
@@ -85,7 +85,7 @@ const ProfilePicture: React.FC = () => {
               {t('See the list >')}
             </Link>
           </Text>
-          <NftWrapper>
+          {/* <NftWrapper>
             {isLoading ? (
               <Skeleton height="80px" mb="16px" />
             ) : (
@@ -107,7 +107,7 @@ const ProfilePicture: React.FC = () => {
                 )
               })
             )}
-          </NftWrapper>
+          </NftWrapper> */}
           <Heading as="h4" scale="lg" mb="8px">
             {t('Allow collectible to be locked')}
           </Heading>

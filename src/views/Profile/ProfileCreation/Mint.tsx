@@ -8,14 +8,14 @@ import { DEFAULT_TOKEN_DECIMAL } from 'config'
 import { useCake, useBunnyFactory } from 'hooks/useContract'
 import { Nft } from 'config/constants/types'
 import useHasCakeBalance from 'hooks/useHasCakeBalance'
-import nftList from 'config/constants/nfts'
+// import nftList from 'config/constants/nfts'
 import SelectionCard from '../components/SelectionCard'
 import NextStepButton from '../components/NextStepButton'
 import ApproveConfirmButtons from '../components/ApproveConfirmButtons'
 import useProfileCreation from './contexts/hook'
 import { MINT_COST, STARTER_BUNNY_IDENTIFIERS } from './config'
 
-const nfts = nftList.filter((nft) => STARTER_BUNNY_IDENTIFIERS.includes(nft.identifier))
+// const nfts = nftList.filter((nft) => STARTER_BUNNY_IDENTIFIERS.includes(nft.identifier))
 const minimumCakeBalanceToMint = new BigNumber(MINT_COST).multipliedBy(DEFAULT_TOKEN_DECIMAL)
 
 const Mint: React.FC = () => {
@@ -72,7 +72,7 @@ const Mint: React.FC = () => {
           <Text as="p" mb="24px" color="textSubtle">
             {t('Cost: %num% RUBY', { num: MINT_COST })}
           </Text>
-          {nfts.map((nft) => {
+          {/* {nfts.map((nft) => {
             const handleChange = (value: string) => setVariationId(Number(value))
 
             return (
@@ -88,7 +88,7 @@ const Mint: React.FC = () => {
                 <Text bold>{nft.name}</Text>
               </SelectionCard>
             )
-          })}
+          })} */}
           {!hasMinimumCakeRequired && (
             <Text color="failure" mb="16px">
               {t('A minimum of %num% RUBY is required', { num: MINT_COST })}

@@ -1,116 +1,222 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import styled from 'styled-components'
 import { ethers } from 'ethers'
 import {
   Card,
   CardBody,
   Heading,
-  Tag,
   Button,
-  ChevronUpIcon,
-  ChevronDownIcon,
   Text,
-  CardFooter,
   useModal,
+  AutoRenewIcon,
 } from '@twinkykms/rubyswap-uikit'
-import { useProfile } from 'state/profile/hooks'
 import { useTranslation } from 'contexts/Localization'
 import { Nft } from 'config/constants/types'
 import InfoRow from '../InfoRow'
-import TransferNftModal from '../TransferNftModal'
-import ClaimNftModal from '../ClaimNftModal'
+import CreateAuctionModal from '../CreateAuctionModal'
+import BidModal from '../BidModal'
 import Preview from './Preview'
+import { useWeb3React } from '@web3-react/core'
+import lock from "./lock.svg"
+import Countdown from "react-countdown"
+import useToast from 'hooks/useToast'
+import ListSuccessModal from '../ListSuccessModal'
+import GetTokenModal from '../GetTokenModal'
+import BidSuccessModal from '../BidSuccessModal'
+import axios from 'axios'
+
+const baseUrl = "https://api.bidify.org/api"
 
 export interface NftCardProps {
   nft: Nft
-  canClaim?: boolean
-  tokenIds?: number[]
-  onClaim?: () => Promise<ethers.providers.TransactionResponse>
-  refresh: () => void
+  isAuction: boolean
+  bidify: any
+  onSuccess?: any
 }
 
 const Header = styled(InfoRow)`
-  min-height: 28px;
-`
-
-const DetailsButton = styled(Button).attrs({ variant: 'text' })`
-  height: auto;
-  padding: 16px 24px;
-
-  &:hover:not(:disabled):not(:active) {
-    background-color: transparent;
-  }
-
-  &:focus:not(:active) {
-    box-shadow: none;
-  }
+  // min-height: 28px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
 `
 
 const InfoBlock = styled.div`
-  padding: 24px;
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
 `
-
-const NftCard: React.FC<NftCardProps> = ({ nft, canClaim = false, tokenIds = [], onClaim, refresh }) => {
-  const [isOpen, setIsOpen] = useState(false)
+const CurrentBid = styled.div`
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+`
+const EndsIn = styled.div`
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+`
+const Description = styled.pre`
+  line-height: 22px;
+  margin-top: 8px;
+  white-space: pre-wrap;
+`
+const NftCard: React.FC<NftCardProps> = ({ nft, isAuction, bidify, onSuccess }) => {
+  const [symbol, setSymbol] = useState('')
   const { t } = useTranslation()
-  const { profile } = useProfile()
-  const { identifier, name, description } = nft
-  const walletOwnsNft = tokenIds.length > 0
-  const Icon = isOpen ? ChevronUpIcon : ChevronDownIcon
+  const { account, chainId } = useWeb3React()
+  const { name, creator, image, currentBid, endTime, id, currency, highBidder, description } = nft
+  // console.log("nft", nft)
+  const [isLoading, setIsLoading] = useState(false);
+  const isUser = account?.toLocaleLowerCase() === creator?.toLocaleLowerCase();
+  const isHighBidder = account?.toLocaleLowerCase() === highBidder?.toLocaleLowerCase();
+  const { toastSuccess, toastError } = useToast()
+  
+  useEffect(() => {
+    const getSymbols = async () => {
+      if(currency === "0x0000000000000000000000000000000000000000" || !currency) {
+        switch(chainId) {
+          case 1987:
+            setSymbol("EGEM")
+            break
+          default: 
+            setSymbol("ETH")
+            break
+        }
+        return
+      }
+      const res = await bidify.getSymbol(currency);
+      setSymbol(res.toUpperCase());
+    }
+    if(chainId) getSymbols()
+  }, [chainId]);
+
+
+  const [onListSuccess] = useModal(
+    <ListSuccessModal nft={nft} />
+  )
+  const [onBidSuccess] = useModal(
+    <BidSuccessModal nft={nft} />
+  )
+  const [onGetToken] = useModal(
+    <GetTokenModal token={symbol} address={currency} /> 
+  )
+  const handleSuccess = () => {
+    onListSuccess()
+    onSuccess()
+  }
+  const handleBidSuccess = () => {
+    onBidSuccess()
+    onSuccess()
+  }
+  const onFailed = (error: Error) => {
+    toastError("Transaction Failed", error.message)
+  }
+  const onLowBalance = () => {
+    onGetToken()
+  }
+  const [onCreateAuctionModal] = useModal(
+    <CreateAuctionModal nft={nft} onFailed={onFailed} bidify={bidify} onSuccess={handleSuccess} />,
+  )
+  
+  const [onBidModal] = useModal(
+    <BidModal nft={{...nft, symbol}} onSuccess={handleBidSuccess} bidify={bidify} onFailed={onFailed} onLowBalance={onLowBalance} />
+  )
 
   const handleClick = async () => {
-    setIsOpen(!isOpen)
+    onBidModal()
   }
 
-  const handleSuccess = () => {
-    refresh()
+  const handleFinishAuction = async () => {
+    setIsLoading(true);
+    try {
+      await bidify.finish(id);
+      toastSuccess("Transaction Confirmed", "Finished auction successfully!")
+      const updateData = await bidify.getDetailFromId(id);
+      await axios.put(`${baseUrl}/auctions/${id}`, updateData)
+      onSuccess()
+    } catch (error: any) {
+      toastError("Transaction Failed", error.message)
+      setIsLoading(false)
+      console.log(error)
+    }
+  }
+  const handleCreateAuction = async () => {
+    onCreateAuctionModal()
+    // console.log(name.replaceAll(" ", "%20"))
+    // onListSuccess()
   }
 
-  const [onPresentTransferModal] = useModal(
-    <TransferNftModal nft={nft} tokenIds={tokenIds} onSuccess={handleSuccess} />,
-  )
-  const [onPresentClaimModal] = useModal(<ClaimNftModal nft={nft} onSuccess={handleSuccess} onClaim={onClaim} />)
+  const renderer = ({ days, hours, minutes, seconds, completed }) => {
+    if (completed) {
+      // Render a completed state
+      return (
+        <>
+          <InfoBlock>
+            <CurrentBid>
+              {
+                currentBid ? 
+                <Text color="primary">
+                  Sold out for {currentBid} {symbol}
+                </Text> : 
+                <Text>Not sold out</Text>
+              }
+            </CurrentBid>
+          </InfoBlock>
+          <Button
+            variant="danger"
+            mt={2}
+            width="100%"
+            // style={{ pointerEvents: !isUser && "none" }}
+            onClick={ () => handleFinishAuction() }
+            isLoading={isLoading}
+            endIcon={isLoading && <AutoRenewIcon spin color="currentColor" />}
+          >
+            Finish Auction
+          </Button>
+        </>
+      );
+    } else {
+      // Render a countdown
+      return (
+        <>
+          <InfoBlock>
+            <CurrentBid>
+              <Text color="primary">
+                {currentBid ? currentBid : 0} {symbol}
+              </Text>
+              <Text style={{ fontSize: 12 }}>Current Bid</Text>
+            </CurrentBid>
+            <EndsIn>
+              <Text color="primary">
+                {days} : {hours} : {minutes} : {seconds}
+              </Text>
+              <Text style={{ fontSize: 12 }}>Bidding Ends In</Text>
+            </EndsIn>
+          </InfoBlock>
+          <Button variant="success" width="100%" mt={2} onClick={handleClick} isLoading={isUser || isHighBidder}>
+            {isUser ? (<img src={lock} alt="lock" width={18} />) : !isHighBidder ? t('Place a Bid') : t("You are the highest bidder")}
+          </Button>
+        </>
+      );
+    }
+  };
 
   return (
-    <Card isActive={walletOwnsNft}>
-      <Preview nft={nft} isOwned={walletOwnsNft} />
-      <CardBody>
+    <Card isActive={false}>
+      <Preview nft={nft} />
+      <CardBody p={3} >
         <Header>
-          <Heading>{name}</Heading>
-          {walletOwnsNft && (
-            <Tag outline variant="secondary">
-              {t('In Wallet')}
-            </Tag>
-          )}
-          {profile?.nft?.identifier === identifier && (
-            <Tag outline variant="success">
-              {t('Profile Pic')}
-            </Tag>
-          )}
+          <Heading color='primary' >{name}</Heading>
+          {isAuction && <Text style={{fontSize: 12}}>{isUser ? t("By: You") : `By: #${creator?.slice(0, 4)}...${creator?.slice(creator?.length - 4)}`}</Text>}
+          {isAuction ? <Countdown date={new Date(endTime * 1000)} renderer={renderer} /> :
+          <Description>{description}</Description>
+          }
+          {!isAuction && <Button variant="success" mt={2} width="100%" onClick={handleCreateAuction} >
+            {t("Create Auction")}
+          </Button>}
         </Header>
-        {canClaim && (
-          <Button width="100%" mt="24px" onClick={onPresentClaimModal}>
-            {t('Claim this NFT')}
-          </Button>
-        )}
-        {walletOwnsNft && (
-          <Button width="100%" variant="secondary" mt="24px" onClick={onPresentTransferModal}>
-            {t('Transfer')}
-          </Button>
-        )}
       </CardBody>
-      <CardFooter p="0">
-        <DetailsButton width="100%" endIcon={<Icon width="24px" color="primary" />} onClick={handleClick}>
-          {t('Details')}
-        </DetailsButton>
-        {isOpen && (
-          <InfoBlock>
-            <Text as="p" color="textSubtle" style={{ textAlign: 'center' }}>
-              {t(description)}
-            </Text>
-          </InfoBlock>
-        )}
-      </CardFooter>
     </Card>
   )
 }

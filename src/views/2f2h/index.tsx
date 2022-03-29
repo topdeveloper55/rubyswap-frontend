@@ -1,6 +1,6 @@
 import React, { useState, useMemo, useEffect, useCallback } from 'react'
 import styled from 'styled-components'
-import { Text, Flex, Button, Input, Heading, useModal, Modal,InjectedModalProps, Skeleton  } from '@twinkykms/rubyswap-uikit'
+import { Text, Flex, Button, Input, Heading, useModal, Modal, InjectedModalProps, Skeleton  } from '@twinkykms/rubyswap-uikit'
 import Page from 'components/Layout/Page'
 import PageHeader from 'components/PageHeader'
 import Select, { OptionProps } from 'components/Select/Select'

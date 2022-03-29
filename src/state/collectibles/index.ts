@@ -4,7 +4,7 @@ import { nftSources } from 'config/constants/nfts'
 import { NftType } from 'config/constants/types'
 import { getAddress } from 'utils/addressHelpers'
 import { getErc721Contract } from 'utils/contractHelpers'
-import { getNftByTokenId } from 'utils/collectibles'
+// import { getNftByTokenId } from 'utils/collectibles'
 import { ethers } from 'ethers'
 
 const initialState: CollectiblesState = {
@@ -16,77 +16,77 @@ const initialState: CollectiblesState = {
 type NftSourceItem = [number, string]
 
 // Thunks
-export const fetchWalletNfts = createAsyncThunk<NftSourceItem[], string>(
-  'collectibles/fetchWalletNfts',
-  async (account) => {
-    // For each nft source get nft data
-    const nftSourcePromises = Object.keys(nftSources).map(async (nftSourceType) => {
-      const { address: addressObj } = nftSources[nftSourceType as NftType]
-      const address = getAddress(addressObj)
-      const contract = getErc721Contract(address)
+// export const fetchWalletNfts = createAsyncThunk<NftSourceItem[], string>(
+//   'collectibles/fetchWalletNfts',
+//   async (account) => {
+//     // For each nft source get nft data
+//     const nftSourcePromises = Object.keys(nftSources).map(async (nftSourceType) => {
+//       const { address: addressObj } = nftSources[nftSourceType as NftType]
+//       const address = getAddress(addressObj)
+//       const contract = getErc721Contract(address)
 
-      const getTokenIdAndData = async (index: number) => {
-        try {
-          const tokenIdBn: ethers.BigNumber = await contract.tokenOfOwnerByIndex(account, index)
-          const tokenId = tokenIdBn.toNumber()
+//       const getTokenIdAndData = async (index: number) => {
+//         try {
+//           const tokenIdBn: ethers.BigNumber = await contract.tokenOfOwnerByIndex(account, index)
+//           const tokenId = tokenIdBn.toNumber()
 
-          const walletNft = await getNftByTokenId(address, tokenId)
-          return [tokenId, walletNft.identifier]
-        } catch (error) {
-          console.error('getTokenIdAndData', error)
-          return null
-        }
-      }
+//           const walletNft = await getNftByTokenId(address, tokenId)
+//           return [tokenId, walletNft.identifier]
+//         } catch (error) {
+//           console.error('getTokenIdAndData', error)
+//           return null
+//         }
+//       }
 
-      const balanceOfResponse = await contract.balanceOf(account)
-      const balanceOf = balanceOfResponse.toNumber()
+//       const balanceOfResponse = await contract.balanceOf(account)
+//       const balanceOf = balanceOfResponse.toNumber()
 
-      if (balanceOf === 0) {
-        return []
-      }
+//       if (balanceOf === 0) {
+//         return []
+//       }
 
-      const nftDataFetchPromises = []
+//       const nftDataFetchPromises = []
 
-      // For each index get the tokenId and data associated with it
-      for (let i = 0; i < balanceOf; i++) {
-        nftDataFetchPromises.push(getTokenIdAndData(i))
-      }
+//       // For each index get the tokenId and data associated with it
+//       for (let i = 0; i < balanceOf; i++) {
+//         nftDataFetchPromises.push(getTokenIdAndData(i))
+//       }
 
-      const nftData = await Promise.all(nftDataFetchPromises)
-      return nftData
-    })
+//       const nftData = await Promise.all(nftDataFetchPromises)
+//       return nftData
+//     })
 
-    const nftSourceData = await Promise.all(nftSourcePromises)
+//     const nftSourceData = await Promise.all(nftSourcePromises)
 
-    return nftSourceData.flat()
-  },
-)
+//     return nftSourceData.flat()
+//   },
+// )
 
-export const collectiblesSlice = createSlice({
-  name: 'collectibles',
-  initialState,
-  reducers: {},
-  extraReducers: (builder) => {
-    builder.addCase(fetchWalletNfts.pending, (state) => {
-      state.isLoading = true
-    })
-    builder.addCase(fetchWalletNfts.fulfilled, (state, action) => {
-      state.isLoading = false
-      state.isInitialized = true
-      state.data = action.payload.reduce((accum, association) => {
-        if (!association) {
-          return accum
-        }
+// export const collectiblesSlice = createSlice({
+//   name: 'collectibles',
+//   initialState,
+//   reducers: {},
+//   extraReducers: (builder) => {
+//     builder.addCase(fetchWalletNfts.pending, (state) => {
+//       state.isLoading = true
+//     })
+//     builder.addCase(fetchWalletNfts.fulfilled, (state, action) => {
+//       state.isLoading = false
+//       state.isInitialized = true
+//       state.data = action.payload.reduce((accum, association) => {
+//         if (!association) {
+//           return accum
+//         }
 
-        const [tokenId, identifier] = association as NftSourceItem
+//         const [tokenId, identifier] = association as NftSourceItem
 
-        return {
-          ...accum,
-          [identifier]: accum[identifier] ? [...accum[identifier], tokenId] : [tokenId],
-        }
-      }, {})
-    })
-  },
-})
+//         return {
+//           ...accum,
+//           [identifier]: accum[identifier] ? [...accum[identifier], tokenId] : [tokenId],
+//         }
+//       }, {})
+//     })
+//   },
+// })
 
-export default collectiblesSlice.reducer
+// export default collectiblesSlice.reducer

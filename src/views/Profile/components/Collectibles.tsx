@@ -2,7 +2,7 @@ import React from 'react'
 import { Heading, Text, Flex, ChevronRightIcon } from '@twinkykms/rubyswap-uikit'
 import { Link } from 'react-router-dom'
 import { useTranslation } from 'contexts/Localization'
-import { useGetCollectibles } from 'state/hooks'
+// import { useGetCollectibles } from 'state/hooks'
 import styled from 'styled-components'
 import CollectibleCard from './CollectibleCard'
 
@@ -29,7 +29,7 @@ const CollectibleList = styled.div`
 
 const Collectibles = () => {
   const { t } = useTranslation()
-  const { nftsInWallet } = useGetCollectibles()
+  // const { nftsInWallet } = useGetCollectibles()
 
   return (
     <>
@@ -42,7 +42,7 @@ const Collectibles = () => {
       <Text as="p">
         {t('NFTs in this user’s wallet that aren’t approved Rubyswap Collectibles won’t be shown here.')}
       </Text>
-      {nftsInWallet.length > 0 && (
+      {/* {nftsInWallet.length > 0 && (
         <CollectibleList>
           {nftsInWallet.map((nftInWallet) => (
             <CollectibleCard key={nftInWallet.identifier} nft={nftInWallet} />
@@ -55,7 +55,7 @@ const Collectibles = () => {
             {t('No NFTs Found')}
           </Text>
         </Flex>
-      )}
+      )} */}
       <Flex alignItems="center" justifyContent="flex-end">
         <Link to="/collectibles">{t('See all approved Rubyswap Collectibles')}</Link>
         <ChevronRightIcon />

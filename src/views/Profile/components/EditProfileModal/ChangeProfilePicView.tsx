@@ -2,7 +2,7 @@ import React, { useState } from 'react'
 import { Button, InjectedModalProps, Skeleton, Text } from '@twinkykms/rubyswap-uikit'
 import { useWeb3React } from '@web3-react/core'
 import { useAppDispatch } from 'state'
-import { useGetCollectibles } from 'state/hooks'
+// import { useGetCollectibles } from 'state/hooks'
 import { useProfile } from 'state/profile/hooks'
 import { useTranslation } from 'contexts/Localization'
 import useToast from 'hooks/useToast'
@@ -23,7 +23,7 @@ const ChangeProfilePicPage: React.FC<ChangeProfilePicPageProps> = ({ onDismiss }
     nftAddress: null,
   })
   const { t } = useTranslation()
-  const { isLoading, tokenIds, nftsInWallet } = useGetCollectibles()
+  // const { isLoading, tokenIds, nftsInWallet } = useGetCollectibles()
   const dispatch = useAppDispatch()
   const { profile } = useProfile()
   const profileContract = useProfileContract()
@@ -56,7 +56,7 @@ const ChangeProfilePicPage: React.FC<ChangeProfilePicPageProps> = ({ onDismiss }
       <Text as="p" color="textSubtle" mb="24px">
         {t('Choose a new Collectible to use as your profile pic.')}
       </Text>
-      {isLoading ? (
+      {/* {isLoading ? (
         <Skeleton height="80px" mb="16px" />
       ) : (
         nftsInWallet.map((walletNft) => {
@@ -82,8 +82,8 @@ const ChangeProfilePicPage: React.FC<ChangeProfilePicPageProps> = ({ onDismiss }
             </SelectionCard>
           )
         })
-      )}
-      {!isLoading && nftsInWallet.length === 0 && (
+      )} */}
+      {/* {!isLoading && nftsInWallet.length === 0 && (
         <>
           <Text as="p" color="textSubtle" mb="16px">
             {t('Sorry! You don’t have any eligible Collectibles in your wallet to use!')}
@@ -92,7 +92,7 @@ const ChangeProfilePicPage: React.FC<ChangeProfilePicPageProps> = ({ onDismiss }
             {t('Make sure you have a Rubyswap Collectible in your wallet and try again!')}
           </Text>
         </>
-      )}
+      )} */}
       <ApproveConfirmButtons
         isApproveDisabled={isConfirmed || isConfirming || isApproved || selectedNft.tokenId === null}
         isApproving={isApproving}

@@ -1,4 +1,4 @@
-import Nfts, { IPFS_GATEWAY, nftSources } from 'config/constants/nfts'
+import { IPFS_GATEWAY, nftSources } from 'config/constants/nfts'
 import { Nft, NftType } from 'config/constants/types'
 import { getAddress } from './addressHelpers'
 import { getErc721Contract } from './contractHelpers'
@@ -49,25 +49,25 @@ export const getTokenUriData = async (nftAddress: string, tokenId: number) => {
   }
 }
 
-export const getNftByTokenId = async (nftAddress: string, tokenId: number): Promise<Nft | null> => {
-  const uriData = await getTokenUriData(nftAddress, tokenId)
-  const identifierKey = getIdentifierKeyFromAddress(nftAddress)
+// export const getNftByTokenId = async (nftAddress: string, tokenId: number): Promise<Nft | null> => {
+//   const uriData = await getTokenUriData(nftAddress, tokenId)
+//   const identifierKey = getIdentifierKeyFromAddress(nftAddress)
 
-  // Bail out early if we have no uriData, identifierKey, or the value does not
-  // exist in the object
-  if (!uriData) {
-    return null
-  }
+//   // Bail out early if we have no uriData, identifierKey, or the value does not
+//   // exist in the object
+//   if (!uriData) {
+//     return null
+//   }
 
-  if (!identifierKey) {
-    return null
-  }
+//   if (!identifierKey) {
+//     return null
+//   }
 
-  if (!uriData[identifierKey]) {
-    return null
-  }
+//   if (!uriData[identifierKey]) {
+//     return null
+//   }
 
-  return Nfts.find((nft) => {
-    return uriData[identifierKey].includes(nft.identifier)
-  })
-}
+//   return Nfts.find((nft) => {
+//     return uriData[identifierKey].includes(nft.identifier)
+//   })
+// }

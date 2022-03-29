@@ -57,6 +57,14 @@
       "chainId": 1987,
       "decimals": 9,
       "logoURI": "https://ibb.co/Lv8H7cF"
+    },
+    {
+      "name": "Zebrocoin",
+      "symbol": "ZEBRO",
+      "address": "0x89c4434119b237922069673439c35f90025563c9",
+      "chainId": 1987,
+      "decimals": 18,
+      "logoURI": "https://zebrocoin.info/assets/img/logo/zebrocoin_logo_256x256.png"
     }
   ]
 }

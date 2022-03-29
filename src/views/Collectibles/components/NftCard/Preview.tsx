@@ -4,7 +4,6 @@ import { Nft } from 'config/constants/types'
 
 interface PreviewProps {
   nft: Nft
-  isOwned?: boolean
 }
 
 const Container = styled.div`
@@ -25,15 +24,28 @@ const StyledImage = styled.img`
   object-fit: cover;
   border-radius: 24px 24px 0 0;
 `
+const StyledPanel = styled.div`
+  position: absolute;
+  width: 100%;
+  top: 0;
+  left: 0;
+  transition: opacity 1s linear;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 24px 24px 0 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+`
 
 const StyledVideo = styled.video`
   height: 100%;
   width: 100%;
 `
 
-const Preview: React.FC<PreviewProps> = ({ nft, isOwned = false }) => {
-  const { images, name, video } = nft
-  const previewImageSrc = `/images/nfts/${images.lg}`
+const Preview: React.FC<PreviewProps> = ({ nft }) => {
+  const { image, name, video } = nft
+  const previewImageSrc = image
 
   if (video) {
     const videoComponent = (
@@ -43,26 +55,14 @@ const Preview: React.FC<PreviewProps> = ({ nft, isOwned = false }) => {
       </StyledVideo>
     )
 
-    return isOwned ? (
-      <a href={images.ipfs} target="_blank" rel="noreferrer noopener">
-        {videoComponent}
-      </a>
-    ) : (
-      videoComponent
-    )
+    return (videoComponent)
   }
 
-  const previewImage = <StyledImage src={previewImageSrc} alt={name} />
+  const previewImage = previewImageSrc ? <StyledImage src={previewImageSrc} alt={name} /> : <StyledPanel>Loading Image...</StyledPanel>
 
   return (
     <Container>
-      {isOwned ? (
-        <a href={images.ipfs} target="_blank" rel="noreferrer noopener">
-          {previewImage}
-        </a>
-      ) : (
-        previewImage
-      )}
+      {previewImage}
     </Container>
   )
 }

@@ -114,6 +114,18 @@ export type Nft = {
   sortOrder: number
   type: NftType
   video?: NftVideo
+  image?: string
+  endTime?: any
+  creator?: string
+  currentBid?: BigNumber
+  nextBid?: BigNumber
+  currency?: string
+  highBidder?: string
+  id: number
+  token?: string
+  platform?: string
+  owner?: string
+  symbol?: string
 
   // Uniquely identifies the nft.
   // Used for matching an NFT from the config with the data from the NFT's tokenURI
