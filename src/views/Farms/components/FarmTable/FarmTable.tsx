@@ -7,6 +7,7 @@ import Row, { RowProps } from './Row'
 
 export interface ITableProps {
   data: RowProps[]
+  aprs: string[]
   columns: ColumnType<RowProps>[]
   userDataReady: boolean
   sortColumn?: string
@@ -60,7 +61,10 @@ const ScrollButtonContainer = styled.div`
 const FarmTable: React.FC<ITableProps> = (props) => {
   const tableWrapperEl = useRef<HTMLDivElement>(null)
   const { t } = useTranslation()
-  const { data, columns, userDataReady } = props
+  const { data, columns, userDataReady, aprs } = props
+  aprs.map((apr, index) => {
+    return data[index].apr.value = apr
+  })
 
   const { rows } = useTable(columns, data, { sortable: true, sortColumn: 'farm' })
 
@@ -69,14 +73,14 @@ const FarmTable: React.FC<ITableProps> = (props) => {
       behavior: 'smooth',
     })
   }
-
+  // console.log(rows)
   return (
     <Container>
       <TableContainer>
         <TableWrapper ref={tableWrapperEl}>
           <StyledTable>
             <TableBody>
-              {rows.map((row) => {
+              {rows.map((row, index) => {
                 return <Row {...row.original} userDataReady={userDataReady} key={`table-row-${row.id}`} />
               })}
             </TableBody>

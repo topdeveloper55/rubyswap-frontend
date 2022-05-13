@@ -6,6 +6,7 @@ import BigNumber from 'bignumber.js'
 import { BASE_ADD_LIQUIDITY_URL } from 'config'
 import getLiquidityUrlPathParts from 'utils/getLiquidityUrlPathParts'
 import { Skeleton } from '@twinkykms/rubyswap-uikit'
+import { values } from 'lodash'
 
 export interface AprProps {
   value: string
@@ -51,13 +52,12 @@ const Apr: React.FC<AprProps> = ({
 }) => {
   const liquidityUrlPathParts = getLiquidityUrlPathParts({ quoteTokenAddress, tokenAddress })
   const addLiquidityUrl = `${BASE_ADD_LIQUIDITY_URL}/${liquidityUrlPathParts}`
-
   return originalValue !== 0 ? (
     <Container>
-      {originalValue ? (
+      {value ? (
         <>
-          <AprWrapper>{value}%</AprWrapper>
-          {!hideButton && (
+          <AprWrapper>{Number(value)?.toFixed(2)}%</AprWrapper>
+          {/* {!hideButton && (
             <ApyButton
               lpLabel={lpLabel}
               cakePrice={cakePrice}
@@ -65,7 +65,7 @@ const Apr: React.FC<AprProps> = ({
               displayApr={value}
               addLiquidityUrl={addLiquidityUrl}
             />
-          )}
+          )} */}
         </>
       ) : (
         <AprWrapper>
@@ -75,7 +75,7 @@ const Apr: React.FC<AprProps> = ({
     </Container>
   ) : (
     <Container>
-      <AprWrapper>{originalValue}%</AprWrapper>
+      <AprWrapper>{Number(value)?.toFixed(2)}%</AprWrapper>
     </Container>
   )
 }

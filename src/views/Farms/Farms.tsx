@@ -122,8 +122,8 @@ const Farms: React.FC = () => {
   const [viewMode, setViewMode] = usePersistState(ViewMode.TABLE, { localStorageKey: 'pancake_farm_view' })
   const { account } = useWeb3React()
   const [sortOption, setSortOption] = useState('hot')
+  const [APRs, setAPRs] = useState([])
   const chosenFarmsLength = useRef(0)
-
   const isArchived = pathname.includes('archived')
   const isInactive = pathname.includes('history')
   const isActive = !isInactive && !isArchived
@@ -161,12 +161,14 @@ const Farms: React.FC = () => {
         if (!farm.lpTotalInQuoteToken || !farm.quoteToken.busdPrice) {
           return farm
         }
+        // console.log("farmlist function")
         const totalLiquidity = new BigNumber(farm.lpTotalInQuoteToken).times(farm.quoteToken.busdPrice)
-        const { cakeRewardsApr, lpRewardsApr } = isActive
-          ? getFarmApr(new BigNumber(farm.poolWeight), cakePrice, totalLiquidity, farm.lpAddresses[ChainId.MAINNET])
-          : { cakeRewardsApr: 0, lpRewardsApr: 0 }
+        // const { cakeRewardsApr, lpRewardsApr } = isActive
+        //   ? getFarmApr(new BigNumber(farm.poolWeight), cakePrice, totalLiquidity, farm.lpAddresses[ChainId.MAINNET])
+        //   : { cakeRewardsApr: 0, lpRewardsApr: 0 }
 
-        return { ...farm, apr: cakeRewardsApr, lpRewardsApr, liquidity: totalLiquidity }
+        // return { ...farm, apr: cakeRewardsApr, lpRewardsApr, liquidity: totalLiquidity }
+        return { ...farm, liquidity: totalLiquidity }
       })
 
       if (query) {
@@ -224,7 +226,7 @@ const Farms: React.FC = () => {
     if (isArchived) {
       chosenFarms = stakedOnly ? farmsList(stakedArchivedFarms) : farmsList(archivedFarms)
     }
-
+    
     return sortFarms(chosenFarms).slice(0, numberOfFarmsVisible)
   }, [
     sortOption,
@@ -304,7 +306,23 @@ const Farms: React.FC = () => {
 
     return row
   })
-
+  useEffect(() => {
+    // console.log("mounted")
+    setInterval(() => {
+      const getApr = async () => {
+        // console.log(chosenFarmsMemoized)
+        const pAPRs = chosenFarmsMemoized.map(async (farm, index) => {
+          const aprValue = await getFarmApr(farm.lpSymbol)
+          // console.log(aprValue?.toString())
+          // rowData[index].apr.value = aprValue?.toString()
+          return aprValue?.toString()
+        })
+        const _APRs = await Promise.all(pAPRs)
+        setAPRs(_APRs)
+      }
+      getApr()
+    }, 5000)
+  }, [])
   const renderContent = (): JSX.Element => {
     if (viewMode === ViewMode.TABLE && rowData.length) {
       const columnSchema = DesktopColumnSchema
@@ -332,17 +350,17 @@ const Farms: React.FC = () => {
         sortable: column.sortable,
       }))
 
-      return <Table data={rowData} columns={columns} userDataReady={userDataReady} />
+      return <Table data={rowData} aprs={APRs} columns={columns} userDataReady={userDataReady} />
     }
 
     return (
       <FlexLayout>
         <Route exact path={`${path}`}>
-          {chosenFarmsMemoized.map((farm) => (
+          {chosenFarmsMemoized.map((farm, index) => (
             <FarmCard
               key={farm.pid}
               farm={farm}
-              displayApr={getDisplayApr(farm.apr, farm.lpRewardsApr)}
+              displayApr={APRs[index]}
               cakePrice={cakePrice}
               account={account}
               removed={false}
@@ -350,11 +368,11 @@ const Farms: React.FC = () => {
           ))}
         </Route>
         <Route exact path={`${path}/history`}>
-          {chosenFarmsMemoized.map((farm) => (
+          {chosenFarmsMemoized.map((farm, index) => (
             <FarmCard
               key={farm.pid}
               farm={farm}
-              displayApr={getDisplayApr(farm.apr, farm.lpRewardsApr)}
+              displayApr={APRs[index]}
               cakePrice={cakePrice}
               account={account}
               removed
@@ -362,11 +380,11 @@ const Farms: React.FC = () => {
           ))}
         </Route>
         <Route exact path={`${path}/archived`}>
-          {chosenFarmsMemoized.map((farm) => (
+          {chosenFarmsMemoized.map((farm, index) => (
             <FarmCard
               key={farm.pid}
               farm={farm}
-              displayApr={getDisplayApr(farm.apr, farm.lpRewardsApr)}
+              displayApr={APRs[index]}
               cakePrice={cakePrice}
               account={account}
               removed

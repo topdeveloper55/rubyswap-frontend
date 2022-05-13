@@ -163,7 +163,8 @@ const Collectibles = (props) => {
   }
   const [onComingSoon] = useModal(<BackButtonModal description="Coming Soon..." />);
   const handleClickMint = () => {
-    onComingSoon()
+    // onComingSoon()
+    window.open("https://mint.bidify.org", "_blank")
   }
   const handleClickBrowse = () => {
     if(loading) return
