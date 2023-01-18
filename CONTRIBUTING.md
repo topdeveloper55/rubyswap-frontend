@@ -8,8 +8,8 @@ You can start by reading our [Contribution guidelines](https://docs.rubyswap.fin
 Install the dependencies
 
 ```shell
-yarn
-yarn start
+npm install
+npm start
 ```
 
 Don't forget to setup your IDE with `eslint` and `prettier`.
