@@ -1,6 +1,6 @@
 import BigNumber from 'bignumber.js'
 import { BLOCKS_PER_YEAR, RUBY_PER_YEAR, coins, farms, routerAbi, pairAbi } from 'config'
-import Web3 from "web3"
+import Web3 from 'web3'
 import { AbiItem } from 'web3-utils'
 // import lpAprs from 'config/constants/lpAprs.json'
 
@@ -33,28 +33,22 @@ export const getPoolApr = (
  * @param poolLiquidityUsd Total pool liquidity in USD
  * @returns
  */
-export const getFarmApr = async (
-  lpString: string,
-) => {
+export const getFarmApr = async (lpString: string) => {
   // console.log("getting farm apr")
   const str = lpString.toLowerCase()
-  let APR: number;
-  if (str === "ruby") {
+  let APR: number
+  if (str === 'ruby') {
     const lp = new web3.eth.Contract(pairAbi as AbiItem[], farms[0][0].toString())
-    const annualRewards = Number(farms[0][1]) / 1333 * 10 * 6646 * 365
+    const annualRewards = (Number(farms[0][1]) / 1333) * 10 * 6646 * 365
     const staked = await lp.methods.balanceOf('0x24032900bBa1Ef1CB822Df299548Efb222E05614').call()
-    APR = annualRewards / (staked / 1e18) * 100
-  }
-  else if (str.includes('ruby')) {
+    APR = (annualRewards / (staked / 1e18)) * 100
+  } else if (str.includes('ruby')) {
     if (str.includes('egem')) APR = await getAPRwRUBY(farms[1], 0)
     else if (str.includes('tusd')) APR = await getAPRwRUBY(farms[3], 1)
     else if (str.includes('tosa')) APR = await getAPRwRUBY(farms[4], 1)
-  }
-  else {
-    if (str.includes('egem') && str.includes('tusd')) {
+  } else if (str.includes('egem') && str.includes('tusd')) {
       APR = await getAPRwoRUBY(farms[2], 0)
     }
-  }
   return APR
   // const yearlyCakeRewardAllocation = RUBY_PER_YEAR.times(poolWeight)
   // const cakeRewardsApr = yearlyCakeRewardAllocation.times(cakePriceUsd).div(poolLiquidityUsd).times(100)
@@ -69,20 +63,24 @@ export const getFarmApr = async (
 const getAPRwRUBY = async (farm, i) => {
   const lp = new web3.eth.Contract(pairAbi as AbiItem[], farm[0])
   const rubyInFarm = await lp.methods.getReserves().call()
-  const annualRewards = farm[1] / 1333 * 10 * 6646 * 365
-  const APR = annualRewards / (rubyInFarm[i] / 10 ** 18 * 2) * 100
+  const annualRewards = (farm[1] / 1333) * 10 * 6646 * 365
+  const APR = (annualRewards / ((rubyInFarm[i] / 10 ** 18) * 2)) * 100
   return APR
 }
 
 const getAPRwoRUBY = async (farm, i) => {
   const router = new web3.eth.Contract(routerAbi as AbiItem[], '0x6739D25c56d13F14E05a8eadBF237057023F2f4D')
-  const priceSell = await router.methods.getAmountsOut('1000000000000000000', [coins[1][1], '0x33F4999ee298CAa16265E87f00e7A8671c01D870']).call()
-  const priceBuy = await router.methods.getAmountsIn('1000000000000000000', ['0x33F4999ee298CAa16265E87f00e7A8671c01D870', coins[1][1]]).call()
+  const priceSell = await router.methods
+    .getAmountsOut('1000000000000000000', [coins[1][1], '0x33F4999ee298CAa16265E87f00e7A8671c01D870'])
+    .call()
+  const priceBuy = await router.methods
+    .getAmountsIn('1000000000000000000', ['0x33F4999ee298CAa16265E87f00e7A8671c01D870', coins[1][1]])
+    .call()
   const priceRUBY = (Number(priceSell[1]) + Number(priceBuy[0])) / 2 / 10 ** 18
-  const annualRewardsValue = farm[1] / 1333 * 10 * 6646 * 365 * priceRUBY
+  const annualRewardsValue = (farm[1] / 1333) * 10 * 6646 * 365 * priceRUBY
   const lp = new web3.eth.Contract(pairAbi as AbiItem[], farm[0])
   const tusdInFarm = await lp.methods.getReserves().call()
-  const APR = annualRewardsValue / (tusdInFarm[i] / 10 ** 18 * 2) * 100
+  const APR = (annualRewardsValue / ((tusdInFarm[i] / 10 ** 18) * 2)) * 100
   return APR
 }
 

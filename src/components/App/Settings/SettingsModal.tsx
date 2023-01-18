@@ -8,7 +8,7 @@ import {
   Modal,
   ModalBody,
   InjectedModalProps,
-  Toggle
+  Toggle,
 } from '@twinkykms/rubyswap-uikit'
 import {
   useAudioModeManager,

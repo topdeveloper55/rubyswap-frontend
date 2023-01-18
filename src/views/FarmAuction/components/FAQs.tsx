@@ -118,9 +118,7 @@ const FAQs = () => {
                     'A project being whitelisted for participation in an auction by RubySwap is in no way an endorsement or recommendation about said project.',
                   )}
                 </li>
-                <li>
-                  {t('RubySwap strongly advise against sending funds to any projects which request donations.')}
-                </li>
+                <li>{t('RubySwap strongly advise against sending funds to any projects which request donations.')}</li>
                 <li>
                   {t(
                     'RubySwap reserves all rights to remove any project it deems to have acted with malicious or dangerous intent from auctions at any time.',

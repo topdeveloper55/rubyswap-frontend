@@ -540,9 +540,9 @@ export default function RemoveLiquidity({
                         </StyledInternalLink>
                       ) : oneCurrencyIsWETH ? (
                         <StyledInternalLink
-                          to={`/remove/${currencyA && currencyEquals(currencyA, WETH[chainId]) ? 'EGEM' : currencyIdA}/${
-                            currencyB && currencyEquals(currencyB, WETH[chainId]) ? 'EGEM' : currencyIdB
-                          }`}
+                          to={`/remove/${
+                            currencyA && currencyEquals(currencyA, WETH[chainId]) ? 'EGEM' : currencyIdA
+                          }/${currencyB && currencyEquals(currencyB, WETH[chainId]) ? 'EGEM' : currencyIdB}`}
                         >
                           {t('Receive EGEM')}
                         </StyledInternalLink>

@@ -1,5 +1,13 @@
 import React from 'react'
-import { ModalContainer, ModalBody, Text, Button, InjectedModalProps, LinkExternal, Flex } from '@twinkykms/rubyswap-uikit'
+import {
+  ModalContainer,
+  ModalBody,
+  Text,
+  Button,
+  InjectedModalProps,
+  LinkExternal,
+  Flex,
+} from '@twinkykms/rubyswap-uikit'
 import { useTranslation } from 'contexts/Localization'
 
 interface ChartDisclaimerProps extends InjectedModalProps {

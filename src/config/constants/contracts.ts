@@ -2,7 +2,7 @@ export default {
   masterChef: {
     97: '0x1d32c2945C8FDCBc7156c553B7cEa4325a17f4f9',
     56: '0x73feaa1eE314F8c655E354234017bE2193C9E24E',
-    1987: '0x24032900bBa1Ef1CB822Df299548Efb222E05614'
+    1987: '0x24032900bBa1Ef1CB822Df299548Efb222E05614',
   },
   sousChef: {
     1987: '',
@@ -71,5 +71,5 @@ export default {
   tfth: {
     56: '',
     1987: '0x6A655d6e46e41dE1de310Dbd584f46f2f386a797',
-  }
+  },
 }

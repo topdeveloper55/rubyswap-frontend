@@ -32,7 +32,7 @@ const VideoContent = styled.iframe`
   border-radius: 12px;
 `
 export default function Tutorials() {
-  const { t } = useTranslation();
+  const { t } = useTranslation()
   return (
     <>
       <PageHeader>
@@ -77,7 +77,7 @@ export default function Tutorials() {
               allow="accelerometer; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
               allowFullScreen
               title="How to FARM RUBY"
-            />          
+            />
           </EmbedVideo>
           <EmbedVideo>
             <VideoTitle>How to STAKE RUBY</VideoTitle>

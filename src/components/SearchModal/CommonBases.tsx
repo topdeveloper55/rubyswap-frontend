@@ -9,7 +9,7 @@ import { AutoColumn } from '../Layout/Column'
 import QuestionHelper from '../QuestionHelper'
 import { AutoRow } from '../Layout/Row'
 import { CurrencyLogo } from '../Logo'
-import {WrappedTokenInfo} from "../../state/lists/hooks";
+import { WrappedTokenInfo } from '../../state/lists/hooks'
 
 const BaseWrapper = styled.div<{ disable?: boolean }>`
   border: 1px solid ${({ theme, disable }) => (disable ? 'transparent' : theme.colors.dropdown)};

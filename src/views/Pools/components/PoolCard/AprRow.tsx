@@ -16,7 +16,7 @@ interface AprRowProps {
 const AprRow: React.FC<AprRowProps> = ({ pool, performanceFee = 0 }) => {
   const { t } = useTranslation()
   const { stakingToken, earningToken, isFinished, earningTokenPrice, isAutoVault, sousId } = pool
-  const [apr, setApr] = useState("")
+  const [apr, setApr] = useState('')
   const tooltipContent = isAutoVault
     ? t('APY includes compounding, APR doesn’t. This pool’s RUBY is compounded automatically, so we show APY.')
     : t('This pool’s rewards aren’t compounded automatically, so we show APR')
@@ -31,8 +31,7 @@ const AprRow: React.FC<AprRowProps> = ({ pool, performanceFee = 0 }) => {
     if (sousId === 0) {
       const aprValue = await getFarmApr('ruby')
       setApr(aprValue?.toString())
-    }
-    else return setApr("")
+    } else return setApr('')
   }
   useEffect(() => {
     getApr()
@@ -58,14 +57,7 @@ const AprRow: React.FC<AprRowProps> = ({ pool, performanceFee = 0 }) => {
         <Skeleton width="82px" height="32px" />
       ) : (
         <Flex alignItems="center">
-          <Balance
-            fontSize="16px"
-            isDisabled={isFinished}
-            value={Number(apr)}
-            decimals={2}
-            unit="%"
-            bold
-          />
+          <Balance fontSize="16px" isDisabled={isFinished} value={Number(apr)} decimals={2} unit="%" bold />
           {/* <IconButton onClick={onPresentApyModal} variant="text" scale="sm">
             <CalculateIcon color="textSubtle" width="18px" />
           </IconButton> */}

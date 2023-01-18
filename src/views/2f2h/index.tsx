@@ -1,6 +1,16 @@
 import React, { useState, useMemo, useEffect, useCallback } from 'react'
 import styled from 'styled-components'
-import { Text, Flex, Button, Input, Heading, useModal, Modal, InjectedModalProps, Skeleton  } from '@twinkykms/rubyswap-uikit'
+import {
+  Text,
+  Flex,
+  Button,
+  Input,
+  Heading,
+  useModal,
+  Modal,
+  InjectedModalProps,
+  Skeleton,
+} from '@twinkykms/rubyswap-uikit'
 import Page from 'components/Layout/Page'
 import PageHeader from 'components/PageHeader'
 import Select, { OptionProps } from 'components/Select/Select'
@@ -16,8 +26,8 @@ import ERC20_ABI from 'config/abi/erc20.json'
 import { MaxUint256 } from '@ethersproject/constants'
 import { tokens } from './tokenList.json'
 
-const LP_ADDRESS = "0x86B4B00CCB7afd1b1b96afe6dE9422d360e2fF5A"
-const BURN_ADDRESS = "0x000000000000000000000000000000000000dEaD"
+const LP_ADDRESS = '0x86B4B00CCB7afd1b1b96afe6dE9422d360e2fF5A'
+const BURN_ADDRESS = '0x000000000000000000000000000000000000dEaD'
 const StaticInput = styled(Text)`
   background-color: ${({ theme }) => theme.colors.input};
   border-radius: 16px;
@@ -100,17 +110,17 @@ const Form = styled(Flex)`
   gap: 18px;
 `
 const PageFooter = styled.div`
-  background: ${({theme}) => theme.colors.gradients.bubblegum};
+  background: ${({ theme }) => theme.colors.gradients.bubblegum};
   padding: 24px 16px;
   margin-top: 24px;
 `
 
 interface ModalProps extends InjectedModalProps {
-  description: (string | undefined)
+  description: string | undefined
 }
 
-const BackButtonModal: React.FC<ModalProps> = ({description, onDismiss}) => {
-  return(
+const BackButtonModal: React.FC<ModalProps> = ({ description, onDismiss }) => {
+  return (
     <Modal title="Input Error" onDismiss={onDismiss} maxWidth="420px">
       <Heading as="h1" color="primary" my="16px" mx="auto">
         {description}
@@ -119,10 +129,10 @@ const BackButtonModal: React.FC<ModalProps> = ({description, onDismiss}) => {
     </Modal>
   )
 }
-let timeout;
+let timeout
 
 export default function TFTH() {
-  const { t } = useTranslation();
+  const { t } = useTranslation()
   const { account } = useWeb3React()
   const [yourShare, setYourShare] = useState('')
   const [totalShare, setTotalShare] = useState('')
@@ -134,17 +144,17 @@ export default function TFTH() {
   const [coinmarket, setCoinmarket] = useState('')
   const [loading, setLoading] = useState(true)
   const [currentOption, setOption] = useState<OptionProps>({
-    label: "",
-    value: "",
-    id: 0
+    label: '',
+    value: '',
+    id: 0,
   })
   const [showEnable, setShowEnable] = useState(true)
   useEffect(() => {
-    if(tokens.length) {
+    if (tokens.length) {
       const option: OptionProps = {
-        label: "",
+        label: '',
         value: tokens[0].asset,
-        id: 0
+        id: 0,
       }
       setOption(option)
     }
@@ -160,112 +170,120 @@ export default function TFTH() {
   // const getTfthContract = (signer?: ethers.Signer | ethers.providers.Provider) => {
   //   return getContract(currentOption.id === 0 ? TFTH_ETH_ABI : TFTH_TOKEN_ABI, getTfthAddress(), signer)
   // }
-  const provider = new ethers.providers.Web3Provider(window.ethereum);
-  const signer = provider.getSigner();
-  const tfthContract = new ethers.Contract(getTfthAddress(), currentOption.id === 0 ? TFTH_ETH_ABI : TFTH_TOKEN_ABI, signer)
-  const [onInvalidNumber] = useModal(<BackButtonModal description="Invalid number to buy/sell" />);
-  const [onSellError] = useModal(<BackButtonModal description="Cannot sell more shares than you have." />);
+  const provider = new ethers.providers.Web3Provider(window.ethereum)
+  const signer = provider.getSigner()
+  const tfthContract = new ethers.Contract(
+    getTfthAddress(),
+    currentOption.id === 0 ? TFTH_ETH_ABI : TFTH_TOKEN_ABI,
+    signer,
+  )
+  const [onInvalidNumber] = useModal(<BackButtonModal description="Invalid number to buy/sell" />)
+  const [onSellError] = useModal(<BackButtonModal description="Cannot sell more shares than you have." />)
   const atomic = (value, decimals) => {
-    let quantity = decimals;
-    if (value.indexOf(".") !== -1) {
-      quantity -= value.length - value.indexOf(".") - 1;
+    let quantity = decimals
+    if (value.indexOf('.') !== -1) {
+      quantity -= value.length - value.indexOf('.') - 1
     }
-    let atomicized = value.replace(".", "");
+    let atomicized = value.replace('.', '')
     for (let i = 0; i < quantity; i++) {
-      atomicized += "0";
+      atomicized += '0'
     }
-    while (atomicized[0] === "0") {
-      atomicized = atomicized.substr(1);
+    while (atomicized[0] === '0') {
+      atomicized = atomicized.substr(1)
     }
-    return atomicized;
+    return atomicized
   }
 
   const unatomic = (value, decimals) => {
-    const  _value = value.padStart(decimals + 1, "0");
-    let temp = `${_value.substr(0, _value.length - decimals)}.${_value.substr(_value.length - decimals)}`;
-    while (temp[0] === "0") {
-      temp = temp.substr(1);
+    const _value = value.padStart(decimals + 1, '0')
+    let temp = `${_value.substr(0, _value.length - decimals)}.${_value.substr(_value.length - decimals)}`
+    while (temp[0] === '0') {
+      temp = temp.substr(1)
     }
-    while (temp.endsWith("0")) {
-      temp = temp.slice(0, -1);
+    while (temp.endsWith('0')) {
+      temp = temp.slice(0, -1)
     }
-    if (temp.endsWith(".")) {
-      temp = temp.slice(0, -1);
+    if (temp.endsWith('.')) {
+      temp = temp.slice(0, -1)
     }
-    if (temp.startsWith(".")) {
-      temp = `0${temp}`;
+    if (temp.startsWith('.')) {
+      temp = `0${temp}`
     }
-    if (temp === "") {
-      return "0";
+    if (temp === '') {
+      return '0'
     }
-    return temp;
+    return temp
   }
   const numberWithCommas = (num) => {
-    return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+    return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',')
   }
   const update = async () => {
-    if(account === undefined) return
-    if(!currentOption.value.includes("noasset")){
+    if (account === undefined) return
+    if (!currentOption.value.includes('noasset')) {
       fetch(currentOption.value)
-      .then((response) => response.json())
-      .then((data) => {
-        if(data.market_data)
-        {
-          setTotalSupply(`${numberWithCommas((+data.market_data.total_supply).toFixed(2))}`)
-          setPrice(`$${numberWithCommas((+data.market_data.current_price.usd).toFixed(2))}`)
-          setCoinmarket(`$${numberWithCommas((+data.market_data.market_cap.usd).toFixed(2))}`)
-        }
-      })
-      .catch((err) => {console.log(err)})
-    } else {
-      if(currentOption.id === 1) {
+        .then((response) => response.json())
+        .then((data) => {
+          if (data.market_data) {
+            setTotalSupply(`${numberWithCommas((+data.market_data.total_supply).toFixed(2))}`)
+            setPrice(`$${numberWithCommas((+data.market_data.current_price.usd).toFixed(2))}`)
+            setCoinmarket(`$${numberWithCommas((+data.market_data.market_cap.usd).toFixed(2))}`)
+          }
+        })
+        .catch((err) => {
+          console.log(err)
+        })
+    } else if (currentOption.id === 1) {
         const rubyContract = new ethers.Contract(tokens[1].address, ERC20_ABI, signer)
         const tusdContract = new ethers.Contract(tokens[2].address, ERC20_ABI, signer)
         const rubyBalance = await rubyContract.balanceOf(LP_ADDRESS)
         const tusdBalance = await tusdContract.balanceOf(LP_ADDRESS)
         const burnedRuby = await rubyContract.balanceOf(BURN_ADDRESS)
         const rubyTotalSupply = (await rubyContract.totalSupply()).sub(burnedRuby)
-        
+
         setTotalSupply(numberWithCommas((+unatomic(rubyTotalSupply.toString(), 18)).toFixed(2)))
-        let priceStr = tusdBalance.mul(ethers.BigNumber.from(9975)).mul(ethers.BigNumber.from(1e14)).sub(ethers.BigNumber.from(1)).div(rubyBalance);
+        const priceStr = tusdBalance
+          .mul(ethers.BigNumber.from(9975))
+          .mul(ethers.BigNumber.from(1e14))
+          .sub(ethers.BigNumber.from(1))
+          .div(rubyBalance)
         setPrice(`$${numberWithCommas((+ethers.utils.formatEther(priceStr.toString())).toFixed(2))}`)
         setCoinmarket(`$${numberWithCommas((+unatomic(priceStr.mul(rubyTotalSupply).toString(), 36)).toFixed(2))}`)
-      }
-      else {
+      } else {
         setTotalSupply(`0`)
         setPrice(`0`)
         setCoinmarket(`0`)
       }
-    }
     const _yourShares = await tfthContract.balanceOf(account)
     setYourShare(_yourShares.toString())
     const _totalShares = await tfthContract.getTotalShares()
     setTotalShare(_totalShares.toString())
     const _sharePrice = await tfthContract.getSharePrice()
     setSharePrice(unatomic(_sharePrice.toString(), 18))
-    const pSharePrice = _sharePrice.mul(ethers.BigNumber.from(20)).div(ethers.BigNumber.from(19)).add(ethers.BigNumber.from(1))
+    const pSharePrice = _sharePrice
+      .mul(ethers.BigNumber.from(20))
+      .div(ethers.BigNumber.from(19))
+      .add(ethers.BigNumber.from(1))
     let balance
-    if(currentOption.id === 0)
-      balance = await library.getBalance(account)
+    if (currentOption.id === 0) balance = await library.getBalance(account)
     else {
       const erc20 = new ethers.Contract(tokens[currentOption.id].address, ERC20_ABI, signer)
-      balance = await erc20.balanceOf(account);
+      balance = await erc20.balanceOf(account)
     }
     setPruchasableShare(balance.div(pSharePrice).toString())
-    setLoading(false);
-  } 
+    setLoading(false)
+  }
   const withdraw = async () => {
-    const sellShares = share;
+    const sellShares = share
     if (sellShares === 0) {
       onInvalidNumber()
       // alert("Invalid number to sell.")
-      return;
+      return
     }
     if (sellShares > parseInt(yourShare)) {
-     onSellError()
-      return;
+      onSellError()
+      return
     }
-    const tx = await tfthContract.withdraw(sellShares, {from: account})
+    const tx = await tfthContract.withdraw(sellShares, { from: account })
     await tx.wait()
     await update()
     setShare(0)
@@ -274,29 +292,30 @@ export default function TFTH() {
     const buyShares = share
     if (buyShares === 0) {
       onInvalidNumber()
-      return;
+      return
     }
-    const sending = ethers.BigNumber.from(atomic(sharePrice, 18)).mul(ethers.BigNumber.from(buyShares)).mul(ethers.BigNumber.from(20)).div(ethers.BigNumber.from(19)).add(ethers.BigNumber.from(1))
+    const sending = ethers.BigNumber.from(atomic(sharePrice, 18))
+      .mul(ethers.BigNumber.from(buyShares))
+      .mul(ethers.BigNumber.from(20))
+      .div(ethers.BigNumber.from(19))
+      .add(ethers.BigNumber.from(1))
     let tx
-    if(currentOption.id === 0)
-      tx = await tfthContract.deposit(buyShares - 1, { from: account, value: sending})
-    else
-      tx = await tfthContract.deposit(buyShares - 1, sending)
+    if (currentOption.id === 0) tx = await tfthContract.deposit(buyShares - 1, { from: account, value: sending })
+    else tx = await tfthContract.deposit(buyShares - 1, sending)
     await tx.wait()
     await update()
     setShare(0)
   }
-  const [ timer, setTimer ] = useState(0);
+  const [timer, setTimer] = useState(0)
   useEffect(() => {
-    if(account) {
+    if (account) {
       update()
       clearTimeout(timeout)
-      timeout = setTimeout( async () => {
+      timeout = setTimeout(async () => {
         setTimer((prev) => prev + 1)
         // update()
       }, 10000)
     }
-    
   }, [timer, currentOption, account])
   useEffect(() => {
     update()
@@ -308,33 +327,37 @@ export default function TFTH() {
     setOption(option)
     // update()
   }
-  
+
   const options = useMemo(() => {
-    return tokens.map(token => {
+    return tokens.map((token) => {
       return {
-        label: <TokenSymbol><TokenLogo src={token.logoURI} alt="logo" />{token.symbol}</TokenSymbol>,
+        label: (
+          <TokenSymbol>
+            <TokenLogo src={token.logoURI} alt="logo" />
+            {token.symbol}
+          </TokenSymbol>
+        ),
         value: token.asset ? token.asset : `noasset${token.symbol}`,
-        id: token.id
+        id: token.id,
       }
     })
   }, [])
   useEffect(() => {
-    if(currentOption.id === 0) return
+    if (currentOption.id === 0) return
     const checkApproved = async () => {
       const erc20 = new ethers.Contract(tokens[currentOption.id].address, ERC20_ABI, signer)
-      const allowance = await erc20.allowance(account, tokens[currentOption.id].tfth_address);
-      if(allowance > ethers.BigNumber.from(atomic('1', 18))) return setShowEnable(false)
+      const allowance = await erc20.allowance(account, tokens[currentOption.id].tfth_address)
+      if (allowance > ethers.BigNumber.from(atomic('1', 18))) return setShowEnable(false)
       return setShowEnable(true)
     }
     checkApproved()
   }, [currentOption, setShowEnable])
   const approveToken = async () => {
     const erc20 = new ethers.Contract(tokens[currentOption.id].address, ERC20_ABI, signer)
-    const allowance = await erc20.allowance(account, tokens[currentOption.id].tfth_address);
-    if(allowance < ethers.BigNumber.from(atomic('1', 18))) {
+    const allowance = await erc20.allowance(account, tokens[currentOption.id].tfth_address)
+    if (allowance < ethers.BigNumber.from(atomic('1', 18))) {
       const approved = await erc20.approve(tokens[currentOption.id].tfth_address, MaxUint256)
-    }
-    else setShowEnable(false)
+    } else setShowEnable(false)
   }
   return (
     <>
@@ -352,7 +375,7 @@ export default function TFTH() {
       </PageHeader>
       <Page>
         <Row>
-          <Form flexDirection="column" >
+          <Form flexDirection="column">
             <LabelWrapper>
               <Text textTransform="uppercase">{t('Your Shares')}</Text>
               <StaticInput>{loading ? <Skeleton width="100%" height="100%" /> : yourShare}</StaticInput>
@@ -374,26 +397,28 @@ export default function TFTH() {
               <Text textTransform="uppercase">{t('Shares')}</Text>
               <Input type="number" value={share} onChange={(e) => setShare(e.target.valueAsNumber)} />
             </LabelWrapper>
-            {
-              showEnable && currentOption.id !== 0 ? 
+            {showEnable && currentOption.id !== 0 ? (
               <ActionWrapper>
-                <Button onClick={approveToken} variant="success">Enable {tokens[currentOption.id].symbol}</Button>
-              </ActionWrapper> :
+                <Button onClick={approveToken} variant="success">
+                  Enable {tokens[currentOption.id].symbol}
+                </Button>
+              </ActionWrapper>
+            ) : (
               <ActionWrapper>
-              <Button onClick={deposit} variant="success">Buy</Button>
-              <Button onClick={withdraw} variant="success" >Sell</Button>
-            </ActionWrapper>
-            }
-            
+                <Button onClick={deposit} variant="success">
+                  Buy
+                </Button>
+                <Button onClick={withdraw} variant="success">
+                  Sell
+                </Button>
+              </ActionWrapper>
+            )}
           </Form>
           <Form flexDirection="column">
             <Rect>
               <InlineLabelWrapper>
                 <Text textTransform="uppercase">{t('Token')}</Text>
-                <Select
-                  options={options}
-                  onChange={handleTokenChange}
-                />
+                <Select options={options} onChange={handleTokenChange} />
               </InlineLabelWrapper>
               <InlineLabelWrapper>
                 <Text textTransform="uppercase">{t('Total Supply')}</Text>
@@ -418,9 +443,9 @@ export default function TFTH() {
                 title="How to STAKE RUBY"
               /> */}
             </LabelWrapper>
-              <Heading as="h1" scale="xl" color="secondary" mb="24px">
-                {t('Coming Soon')}
-              </Heading>
+            <Heading as="h1" scale="xl" color="secondary" mb="24px">
+              {t('Coming Soon')}
+            </Heading>
           </Form>
         </Row>
         <PageFooter>
@@ -428,23 +453,17 @@ export default function TFTH() {
             <Heading scale="md" mt={1} color="text">
               {t('This is experimental code. Use it at your own risk')}
             </Heading>
-            <InlineLabelWrapper >
-              <a
-                href="https://discord.egem.io"
-              >
+            <InlineLabelWrapper>
+              <a href="https://discord.egem.io">
                 <img src="./images/discord.svg" alt="discord" />
               </a>
-              <a
-                href="https://github.com/2fast2hodl"
-              >
+              <a href="https://github.com/2fast2hodl">
                 <img src="./images/github.svg" alt="github" />
               </a>
             </InlineLabelWrapper>
           </Flex>
         </PageFooter>
       </Page>
-      
     </>
   )
 }
-

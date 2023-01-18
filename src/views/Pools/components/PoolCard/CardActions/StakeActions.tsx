@@ -1,5 +1,15 @@
 import React from 'react'
-import { Flex, Text, Button, IconButton, AddIcon, MinusIcon, useModal, Skeleton, useTooltip } from '@twinkykms/rubyswap-uikit'
+import {
+  Flex,
+  Text,
+  Button,
+  IconButton,
+  AddIcon,
+  MinusIcon,
+  useModal,
+  Skeleton,
+  useTooltip,
+} from '@twinkykms/rubyswap-uikit'
 import BigNumber from 'bignumber.js'
 import { useTranslation } from 'contexts/Localization'
 import { getBalanceNumber } from 'utils/formatBalance'

@@ -33,7 +33,13 @@ export const BUSD: { [chainId: number]: Token } = {
   ),
 }
 
-export const WBNB = new Token(ChainId.ETHERGEM, '0xE5fca20e55811D461800A853f444FBC6f5B72BEa', 18, 'WEGEM', 'Wrapped ETHERGEM')
+export const WBNB = new Token(
+  ChainId.ETHERGEM,
+  '0xE5fca20e55811D461800A853f444FBC6f5B72BEa',
+  18,
+  'WEGEM',
+  'Wrapped ETHERGEM',
+)
 export const DAI = new Token(ChainId.MAINNET, '0x1AF3F329e8BE154074D8769D1FFa4eE058B1DBc3', 18, 'DAI', 'Dai Stablecoin')
 export const USDT = new Token(ChainId.MAINNET, '0x55d398326f99059fF775485246999027B3197955', 18, 'USDT', 'Tether USD')
 export const BTCB = new Token(ChainId.MAINNET, '0x7130d2A12B9BCbFAe4f2634d864A1Ee1Ce3Ead9c', 18, 'BTCB', 'Binance BTC')
@@ -65,41 +71,41 @@ const tokens = {
     projectLink: 'https://www.binance.com/',
   },
   wegem: {
-    symbol: "WEGEM",
+    symbol: 'WEGEM',
     address: {
-      1987: "0xE5fca20e55811D461800A853f444FBC6f5B72BEa"
+      1987: '0xE5fca20e55811D461800A853f444FBC6f5B72BEa',
     },
-    decimals: 18
+    decimals: 18,
   },
   ruby: {
     symbol: 'RUBY',
     address: {
-      1987: '0xB6094af67bf43779ab704455c5DF02AD9141871B'
+      1987: '0xB6094af67bf43779ab704455c5DF02AD9141871B',
     },
     decimals: 18,
     projectLink: 'https://rubyswap.finance/',
   },
   gem: {
-    symbol: "GEM",
+    symbol: 'GEM',
     address: {
-      1987: "0xaf017fe9C9770BdbDA1A014D5D6c87B364225Cd0"
+      1987: '0xaf017fe9C9770BdbDA1A014D5D6c87B364225Cd0',
     },
-    decimals: 18
+    decimals: 18,
   },
   tusd: {
-    symbol: "TUSD",
+    symbol: 'TUSD',
     address: {
-      1987: "0x33F4999ee298CAa16265E87f00e7A8671c01D870"
+      1987: '0x33F4999ee298CAa16265E87f00e7A8671c01D870',
     },
-    decimals: 18
+    decimals: 18,
   },
   tosa: {
-    symbol: "TOSA",
+    symbol: 'TOSA',
     address: {
-      1987: "0x16D2A05Acc35c17B470fe6216D49145Cf85b00E8",
+      1987: '0x16D2A05Acc35c17B470fe6216D49145Cf85b00E8',
     },
-    decimals: 9
-  }
+    decimals: 9,
+  },
 }
 
 export default tokens

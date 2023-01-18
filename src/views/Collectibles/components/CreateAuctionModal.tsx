@@ -8,11 +8,11 @@ import { Nft } from 'config/constants/types'
 import { useTranslation } from 'contexts/Localization'
 import useToast from 'hooks/useToast'
 // import { useERC721 } from 'hooks/useContract'
-import InfoRow from './InfoRow'
 import Select from 'components/Select/Select'
-import axios, {AxiosResponse} from "axios"
+import axios, { AxiosResponse } from 'axios'
+import InfoRow from './InfoRow'
 
-const baseUrl = "https://api.bidify.org/api"
+const baseUrl = 'https://api.bidify.org/api'
 
 interface CreateAuctionModalProps {
   nft: Nft
@@ -57,23 +57,23 @@ const StyledImage = styled.img`
 
 const tokens = [
   {
-    "id": 0,
-    "symbol": "EGEM",
-    "logoURI": "https://raw.githubusercontent.com/top1st/token-assets/main/png/egem.png",
-    "address": null,
+    id: 0,
+    symbol: 'EGEM',
+    logoURI: 'https://raw.githubusercontent.com/top1st/token-assets/main/png/egem.png',
+    address: null,
   },
   {
-    "id": 1,
-    "symbol": "RUBY",
-    "logoURI": "https://raw.githubusercontent.com/top1st/token-assets/main/png/ruby.png",
-    "address": "0xB6094af67bf43779ab704455c5DF02AD9141871B",
+    id: 1,
+    symbol: 'RUBY',
+    logoURI: 'https://raw.githubusercontent.com/top1st/token-assets/main/png/ruby.png',
+    address: '0xB6094af67bf43779ab704455c5DF02AD9141871B',
   },
   {
-    "id": 2,
-    "symbol": "TUSD",
-    "logoURI": "https://cryptologos.cc/logos/trueusd-tusd-logo.png?v=014",
-    "address": "0x33F4999ee298CAa16265E87f00e7A8671c01D870",
-  }  
+    id: 2,
+    symbol: 'TUSD',
+    logoURI: 'https://cryptologos.cc/logos/trueusd-tusd-logo.png?v=014',
+    address: '0x33F4999ee298CAa16265E87f00e7A8671c01D870',
+  },
 ]
 const TokenSymbol = styled.div`
   display: flex;
@@ -96,33 +96,33 @@ const CreateAuctionModal: React.FC<CreateAuctionModalProps> = ({ nft, bidify, on
   const [duration, setDuration] = useState()
   // const [error, setError] = useState(null)
   const [isLoading, setIsLoading] = useState(false)
-  const [currency, setCurrency] = useState("")
+  const [currency, setCurrency] = useState('')
   const { t } = useTranslation()
   const { account } = useWeb3React()
   const { toastSuccess } = useToast()
   const handleConfirm = async () => {
     const price = bidAmount
     const days = duration
-    const { platform, token, owner, name, image } = nft;
-    const isERC721 = owner ? true : false
+    const { platform, token, owner, name, image } = nft
+    const isERC721 = !!owner
     // setIsModal(false);
-    setIsLoading(true);
+    setIsLoading(true)
     // setProcessContent(
     //   "Please allow https://bidify.org permission within your wallet when prompted, there will be a small fee for this…"
     // );
     try {
-      await bidify.signList({ platform, token, isERC721 });
+      await bidify.signList({ platform, token, isERC721 })
       // setProcessContent(
       //   "Confirm the second transaction to allow your NFT to be listed, there will be another small network fee."
       // );
-      const logs = await bidify.getLogs();
-      await bidify.list({ currency, platform, token, price, days, isERC721 });
-      while(await bidify.getLogs() === logs) {
-        console.log("while loop")
+      const logs = await bidify.getLogs()
+      await bidify.list({ currency, platform, token, price, days, isERC721 })
+      while ((await bidify.getLogs()) === logs) {
+        console.log('while loop')
       }
       const listingDetail = await bidify.getDetailFromId(logs)
       await axios.post(`${baseUrl}/auctions`, listingDetail)
-      setIsLoading(false);
+      setIsLoading(false)
       onDismiss()
       onSuccess()
       // setIsSuccess(true);
@@ -131,7 +131,7 @@ const CreateAuctionModal: React.FC<CreateAuctionModalProps> = ({ nft, bidify, on
       //   setIsSuccess(false);
       // }, 3000);
     } catch (error) {
-      setIsLoading(false);
+      setIsLoading(false)
       onFailed(error)
       onDismiss()
       // setIsError(true);
@@ -141,14 +141,19 @@ const CreateAuctionModal: React.FC<CreateAuctionModalProps> = ({ nft, bidify, on
     }
   }
   const handleChange = (e) => {
-    if(e.target.name === "duration") setDuration(e.target.value)
+    if (e.target.name === 'duration') setDuration(e.target.value)
     else setBidAmount(e.target.value)
   }
   const options = useMemo(() => {
-    return tokens.map(token => {
+    return tokens.map((token) => {
       return {
-        label: <TokenSymbol><TokenLogo src={token.logoURI} alt="logo" />{token.symbol}</TokenSymbol>,
-        value: token.address 
+        label: (
+          <TokenSymbol>
+            <TokenLogo src={token.logoURI} alt="logo" />
+            {token.symbol}
+          </TokenSymbol>
+        ),
+        value: token.address,
       }
     })
   }, [])
@@ -157,13 +162,10 @@ const CreateAuctionModal: React.FC<CreateAuctionModalProps> = ({ nft, bidify, on
   }
   return (
     <Modal title={t('%nftName%', { nftName: nft.name })} onDismiss={onDismiss}>
-      <ModalContent >
+      <ModalContent>
         <StyledImage src={nft.image} alt={nft.name} />
-        <Label>{t("Auction Currency")}</Label>
-        <Select
-          options={options}
-          onChange={handleTokenChange}
-        />
+        <Label>{t('Auction Currency')}</Label>
+        <Select options={options} onChange={handleTokenChange} />
         <Label htmlFor="bidAmount">{t('Initial Bid Amount')}:</Label>
         <Input
           id="bidAmount"
@@ -187,11 +189,16 @@ const CreateAuctionModal: React.FC<CreateAuctionModalProps> = ({ nft, bidify, on
           // disabled={isLoading}
         />
       </ModalContent>
-      <Actions >
+      <Actions>
         <Button width="100%" variant="secondary" onClick={onDismiss}>
           {t('Cancel')}
         </Button>
-        <Button width="100%" onClick={handleConfirm} isLoading={isLoading || !account || !bidAmount || !duration} endIcon={isLoading && <AutoRenewIcon spin color="currentColor" />}>
+        <Button
+          width="100%"
+          onClick={handleConfirm}
+          isLoading={isLoading || !account || !bidAmount || !duration}
+          endIcon={isLoading && <AutoRenewIcon spin color="currentColor" />}
+        >
           {t('Confirm')}
         </Button>
       </Actions>

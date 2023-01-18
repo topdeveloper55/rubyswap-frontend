@@ -72,7 +72,6 @@ function useAllCommonPairs(currencyA?: Currency, currencyB?: Currency): Pair[] {
     [tokenA, tokenB, bases, basePairs, chainId],
   )
 
-
   const allPairs = usePairs(allPairCombinations)
   // only pass along valid pairs, non-duplicated pairs
   return useMemo(

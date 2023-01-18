@@ -17,7 +17,7 @@ interface AprProps extends FlexProps {
 const Apr: React.FC<AprProps> = ({ pool, showIcon, performanceFee = 0, ...props }) => {
   const { stakingToken, earningToken, isFinished, earningTokenPrice, sousId } = pool
   const { t } = useTranslation()
-  const [apr, setApr] = useState("")
+  const [apr, setApr] = useState('')
   const { roundingDecimals, compoundFrequency } = getAprData(pool, performanceFee)
 
   const apyModalLink = stakingToken.address ? `/swap?outputCurrency=${getAddress(stakingToken.address)}` : '/swap'
@@ -25,8 +25,7 @@ const Apr: React.FC<AprProps> = ({ pool, showIcon, performanceFee = 0, ...props 
     if (sousId === 0) {
       const aprValue = await getFarmApr('ruby')
       setApr(aprValue?.toString())
-    }
-    else return setApr("")
+    } else return setApr('')
   }
   useEffect(() => {
     getApr()

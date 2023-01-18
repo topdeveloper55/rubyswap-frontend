@@ -63,7 +63,7 @@ const FarmTable: React.FC<ITableProps> = (props) => {
   const { t } = useTranslation()
   const { data, columns, userDataReady, aprs } = props
   aprs.map((apr, index) => {
-    return data[index].apr.value = apr
+    return (data[index].apr.value = apr)
   })
 
   const { rows } = useTable(columns, data, { sortable: true, sortColumn: 'farm' })

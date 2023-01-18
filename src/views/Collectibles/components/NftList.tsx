@@ -5,11 +5,10 @@ import orderBy from 'lodash/orderBy'
 // import { useAppDispatch } from 'state'
 // import { fetchWalletNfts } from 'state/collectibles'
 // import { useGetCollectibles } from 'state/hooks'
-import NftCard from './NftCard'
-import NftGrid from './NftGrid'
 import { Heading } from '@twinkykms/rubyswap-uikit'
 import styled from 'styled-components'
-
+import NftCard from './NftCard'
+import NftGrid from './NftGrid'
 
 /**
  * A map of bunnyIds to special campaigns (NFT distribution)
@@ -21,46 +20,48 @@ const TextWrapper = styled.div`
   width: 100%;
   height: 100%;
 `
-const NftList = ({nfts, isAuction, bidify, onSuccess, searchText = ""}) => {
+const NftList = ({ nfts, isAuction, bidify, onSuccess, searchText = '' }) => {
   // const { tokenIds } = useGetCollectibles()
   // const dispatch = useAppDispatch()
   // const { account } = useWeb3React()
   const [showing, setShowing] = useState(false)
   useEffect(() => {
     setShowing(true)
-    if(!isAuction) setShowing(false)
-    if(isAuction && nfts) {
+    if (!isAuction) setShowing(false)
+    if (isAuction && nfts) {
       nfts.map((nft) => {
-        if(nft.name.toLowerCase().includes(searchText.toLowerCase())){
+        if (nft.name.toLowerCase().includes(searchText.toLowerCase())) {
           return setShowing(false)
         }
-          
       })
     }
   }, [nfts, isAuction, searchText])
   return (
     <NftGrid>
-      {isAuction && orderBy(nfts, 'endTime').map((nft, index) => {
-      if(nft.name.toLowerCase().includes(searchText.toLowerCase()))
-        return (
-          <div key={index}>
-            <NftCard nft={nft} isAuction={isAuction} bidify={bidify} onSuccess={onSuccess} />
-          </div>
-        )
-      })}
+      {isAuction &&
+        orderBy(nfts, 'endTime').map((nft, index) => {
+          if (nft.name.toLowerCase().includes(searchText.toLowerCase()))
+            return (
+              <div key={index}>
+                <NftCard nft={nft} isAuction={isAuction} bidify={bidify} onSuccess={onSuccess} />
+              </div>
+            )
+        })}
 
-      {!isAuction && nfts.length > 0 && nfts.map((nft, index) => {
-        return(
-          <div key={index}>
-            <NftCard nft={nft} isAuction={isAuction} bidify={bidify} onSuccess={onSuccess} />
-          </div>
-        )
-      })}
-      {(showing || (!isAuction && nfts.length === 0)) &&
+      {!isAuction &&
+        nfts.length > 0 &&
+        nfts.map((nft, index) => {
+          return (
+            <div key={index}>
+              <NftCard nft={nft} isAuction={isAuction} bidify={bidify} onSuccess={onSuccess} />
+            </div>
+          )
+        })}
+      {(showing || (!isAuction && nfts.length === 0)) && (
         <TextWrapper>
-          <Heading scale='lg' >No items found</Heading>
+          <Heading scale="lg">No items found</Heading>
         </TextWrapper>
-      }
+      )}
     </NftGrid>
   )
 }

@@ -12,7 +12,6 @@ interface WarningTokenList {
   [key: string]: WarningToken
 }
 
-const SwapWarningTokens = <WarningTokenList>{
-}
+const SwapWarningTokens = <WarningTokenList>{}
 
 export default SwapWarningTokens

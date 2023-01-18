@@ -55,16 +55,16 @@ const Preview: React.FC<PreviewProps> = ({ nft }) => {
       </StyledVideo>
     )
 
-    return (videoComponent)
+    return videoComponent
   }
 
-  const previewImage = previewImageSrc ? <StyledImage src={previewImageSrc} alt={name} /> : <StyledPanel>Loading Image...</StyledPanel>
-
-  return (
-    <Container>
-      {previewImage}
-    </Container>
+  const previewImage = previewImageSrc ? (
+    <StyledImage src={previewImageSrc} alt={name} />
+  ) : (
+    <StyledPanel>Loading Image...</StyledPanel>
   )
+
+  return <Container>{previewImage}</Container>
 }
 
 export default Preview
