@@ -81,7 +81,7 @@ const NftCard: React.FC<NftCardProps> = ({ nft, isAuction, bidify, onSuccess }) 
       setSymbol(res.toUpperCase())
     }
     if (chainId) getSymbols()
-  }, [chainId])
+  }, [bidify, chainId, currency])
 
   const [onListSuccess] = useModal(<ListSuccessModal nft={nft} />)
   const [onBidSuccess] = useModal(<BidSuccessModal nft={nft} />)

@@ -179,7 +179,7 @@ const Farms: React.FC = () => {
       }
       return farmsToDisplayWithAPR
     },
-    [cakePrice, query, isActive],
+    [query],
   )
 
   const handleChangeQuery = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -322,7 +322,7 @@ const Farms: React.FC = () => {
       }
       getApr()
     }, 5000)
-  }, [])
+  }, [chosenFarmsMemoized])
   const renderContent = (): JSX.Element => {
     if (viewMode === ViewMode.TABLE && rowData.length) {
       const columnSchema = DesktopColumnSchema

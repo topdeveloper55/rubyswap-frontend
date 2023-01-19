@@ -35,6 +35,7 @@ const AprRow: React.FC<AprRowProps> = ({ pool, performanceFee = 0 }) => {
   }
   useEffect(() => {
     getApr()
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [sousId])
   const [onPresentApyModal] = useModal(
     <ApyCalculatorModal

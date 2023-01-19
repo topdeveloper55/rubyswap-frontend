@@ -17,8 +17,6 @@ export class Bidify {
 
   web3: Web3
 
-  constructor() {}
-
   setBidify(chainId: number, library: Web3Provider, account: string) {
     this.chainId = chainId
     this.library = library
@@ -35,21 +33,21 @@ export class Bidify {
       topics: [topic0],
     })
     topic0 = '0xb78855d635dc85f7e40710ac78f3e31deb7f450cde53401783bc430e49cb22ce'
-    const logs_ended = await this.web3.eth.getPastLogs({
+    const logsEnded = await this.web3.eth.getPastLogs({
       fromBlock: 'earliest',
       toBlock: 'latest',
       address: BIDIFY_ADDRESS[this.chainId],
       topics: [topic0],
     })
     const totalLists = []
-    for (const log_listed of logs) {
-      const id_listed = log_listed.topics[1]
+    for (const logListed of logs) {
+      const idListed = logListed.topics[1]
       let isEnded = false
-      for (const log_ended of logs_ended) {
-        const id_ended = log_ended.topics[1]
-        if (id_listed === id_ended) isEnded = true
+      for (const logEnded of logsEnded) {
+        const idEnded = logEnded.topics[1]
+        if (idListed === idEnded) isEnded = true
       }
-      if (!isEnded) totalLists.push(log_listed)
+      if (!isEnded) totalLists.push(logListed)
     }
     return totalLists
   }
@@ -258,7 +256,7 @@ export class Bidify {
         continue
       }
     }
-    const logs_1155 = await web3.eth.getPastLogs({
+    const logs1155 = await web3.eth.getPastLogs({
       fromBlock: 0,
       toBlock: 'latest',
       topics: [
@@ -269,7 +267,7 @@ export class Bidify {
         `0x${  from.split('0x')[1].padStart(64, '0')}`,
       ],
     })
-    for (const log of logs_1155) {
+    for (const log of logs1155) {
       if (log.topics[3] !== undefined) {
         const platform = log.address
         const decodeData = web3.eth.abi.decodeParameters(['uint256', 'uint256'], log.data)
@@ -308,7 +306,7 @@ export class Bidify {
         topics: [topic0],
       })
     } catch (e) {
-      console.log(e.message)
+      console.log(e)
     }
 
     return logs.length
@@ -321,10 +319,9 @@ export class Bidify {
   }
 
   async getCollection(page: number, nftsPerPage: number) {
-    let getNft
     let results = []
     // console.log("getting nft")
-    getNft = await this.getNFTs()
+    const getNft = await this.getNFTs()
     // console.log("get nfts", getNft);
     const sId = page * nftsPerPage
     const eId = (page + 1) * nftsPerPage > getNft.length ? getNft.length : (page + 1) * nftsPerPage
@@ -359,9 +356,10 @@ export class Bidify {
   }
 
   async list({ currency, platform, token, price, days, allowMarketplace = false, isERC721 }) {
-    const decimals = await this.getDecimals(currency)
+    let curr = currency
+    const decimals = await this.getDecimals(curr)
     if (!currency) {
-      currency = '0x0000000000000000000000000000000000000000'
+      curr = '0x0000000000000000000000000000000000000000'
     }
     const bidify = this.getBidify()
     const tokenNum = isERC721 ? token : this.web3.utils.hexToNumberString(token)
@@ -378,7 +376,7 @@ export class Bidify {
       )
       return await tx.wait()
     } catch (error) {
-      throw error
+      console.log(error)
     }
   }
 
@@ -489,7 +487,7 @@ export class Bidify {
       temp = `0${  temp}`
     }
 
-    if (temp == '') {
+    if (temp === '') {
       return '0'
     }
     return temp

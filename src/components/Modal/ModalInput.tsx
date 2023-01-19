@@ -63,6 +63,7 @@ const ModalInput: React.FC<ModalInputProps> = ({
   symbol,
   onChange,
   onSelectMax,
+  placeholder,
   value,
   addLiquidityUrl,
   inputTitle,

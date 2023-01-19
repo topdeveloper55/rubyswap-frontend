@@ -29,11 +29,11 @@ const NftList = ({ nfts, isAuction, bidify, onSuccess, searchText = '' }) => {
     setShowing(true)
     if (!isAuction) setShowing(false)
     if (isAuction && nfts) {
-      nfts.map((nft) => {
+      nfts.forEach(nft => {
         if (nft.name.toLowerCase().includes(searchText.toLowerCase())) {
-          return setShowing(false)
+          setShowing(false)
         }
-      })
+      });
     }
   }, [nfts, isAuction, searchText])
   return (

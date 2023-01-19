@@ -171,6 +171,7 @@ const Collectibles = (props) => {
     }
     if (isAuction) getBidifyNFTs()
     else getCollections()
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [account, chainId, library, isAuction, reloader])
   const handleUpdate = async (update) => {
     if (update.length === 0) return
@@ -284,7 +285,7 @@ const Collectibles = (props) => {
         ) : (
           <NftList
             onSuccess={() => {
-              setReloader((reloader) => reloader + 1)
+              setReloader((_reloader) => _reloader + 1)
             }}
             bidify={bidify}
             nfts={searching ? nfts : nfts.slice(page * nftsPerPage, nftsPerPage * (page + 1))}

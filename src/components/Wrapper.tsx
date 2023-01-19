@@ -7,14 +7,14 @@ interface WrapperProps {
   // children: React.PropsWithChildren<any>
 }
 
-export const Wrapper = (props: WrapperProps) => {
+export const Wrapper = ({initialized}: WrapperProps) => {
   const location = useLocation()
 
   React.useEffect(() => {
-    if (props.initialized) {
+    if (initialized) {
       // console.log(location.pathname + location.search)
       ReactGa.pageview(location.pathname + location.search)
     }
-  }, [props.initialized, location])
+  }, [initialized, location])
   return <></>
 }

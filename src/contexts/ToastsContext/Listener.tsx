@@ -1,5 +1,6 @@
 import React from 'react'
 import { ToastContainer } from '@twinkykms/rubyswap-uikit'
+// eslint-disable-next-line import/no-cycle
 import useToast from 'hooks/useToast'
 
 const ToastListener = () => {

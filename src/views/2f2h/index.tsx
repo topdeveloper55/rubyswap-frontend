@@ -1,3 +1,5 @@
+/* eslint-disable react-hooks/exhaustive-deps */
+
 import React, { useState, useMemo, useEffect, useCallback } from 'react'
 import styled from 'styled-components'
 import {
@@ -351,7 +353,7 @@ export default function TFTH() {
       return setShowEnable(true)
     }
     checkApproved()
-  }, [currentOption, setShowEnable])
+  }, [account, currentOption, setShowEnable, signer])
   const approveToken = async () => {
     const erc20 = new ethers.Contract(tokens[currentOption.id].address, ERC20_ABI, signer)
     const allowance = await erc20.allowance(account, tokens[currentOption.id].tfth_address)
